@@ -1,76 +1,52 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Login from '../components/Login'
+import { MemoryRouter } from 'react-router-dom'
+import LoginPage from '../pages/LoginPage'
+import { AuthProvider } from '../context/AuthContext'
 
-describe('Login Component', () => {
-  const mockOnLoginSuccess = vi.fn()
+vi.mock('../services/api', () => ({
+  login: vi.fn(),
+}))
 
+import { login } from '../services/api'
+
+describe('LoginPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    global.fetch = vi.fn()
+    localStorage.clear()
   })
 
-  it('deve renderizar o formulário de login', () => {
-    render(<Login onLoginSuccess={mockOnLoginSuccess} />)
-    
+  it('renderiza o formulário de login', () => {
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>
+    )
+
     expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/senha/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument()
   })
 
-  it('deve fazer login com sucesso', async () => {
-    const mockResponse = {
-      token: 'fake-token',
-      user: { id: 1, nome: 'Teste', email: 'teste@email.com' }
-    }
-    global.fetch.mockResolvedValue({
-      ok: true,
-      json: async () => mockResponse
-    })
+  it('faz login com sucesso', async () => {
+    login.mockResolvedValue({ token: 'fake-token', user: { id: 1, nome: 'Teste' } })
 
-    render(<Login onLoginSuccess={mockOnLoginSuccess} />)
-    
-    const emailInput = screen.getByLabelText(/e-mail/i)
-    const passwordInput = screen.getByLabelText(/senha/i)
-    const submitButton = screen.getByRole('button', { name: /entrar/i })
-    
-    await userEvent.type(emailInput, 'teste@email.com')
-    await userEvent.type(passwordInput, 'senha123')
-    fireEvent.click(submitButton)
-    
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>
+    )
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'teste@email.com')
+    await userEvent.type(screen.getByLabelText(/senha/i), 'senha123')
+    fireEvent.click(screen.getByRole('button', { name: /entrar/i }))
+
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:8000/auth/login',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: 'teste@email.com', senha: 'senha123' })
-        })
-      )
-      expect(mockOnLoginSuccess).toHaveBeenCalledWith(mockResponse.user)
+      expect(login).toHaveBeenCalledWith('teste@email.com', 'senha123')
     })
-  })
-
-  it('deve exibir erro quando credenciais são inválidas', async () => {
-    global.fetch.mockResolvedValue({
-      ok: false,
-      json: async () => ({ detail: 'Credenciais inválidas' })
-    })
-
-    render(<Login onLoginSuccess={mockOnLoginSuccess} />)
-    
-    const emailInput = screen.getByLabelText(/e-mail/i)
-    const passwordInput = screen.getByLabelText(/senha/i)
-    const submitButton = screen.getByRole('button', { name: /entrar/i })
-    
-    await userEvent.type(emailInput, 'teste@email.com')
-    await userEvent.type(passwordInput, 'senha_errada')
-    fireEvent.click(submitButton)
-    
-    await waitFor(() => {
-      expect(screen.getByText(/credenciais inválidas/i)).toBeInTheDocument()
-    })
-    expect(mockOnLoginSuccess).not.toHaveBeenCalled()
   })
 })

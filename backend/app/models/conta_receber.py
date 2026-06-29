@@ -1,22 +1,57 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
-from backend.app.database import Base
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, Numeric, String
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from backend.app.core.database import Base
+
 
 class ContaReceber(Base):
-    __tablename__ = "conta_receber"
+    __tablename__ = "contas_receber"
 
+    # =========================
+    # Identificação
+    # =========================
     id = Column(Integer, primary_key=True, index=True)
-    cliente_id = Column(Integer, nullable=False)
-    valor_original = Column(Float, default=0.0, nullable=False)
-    multa = Column(Float, default=0.0, nullable=False)
-    juros = Column(Float, default=0.0, nullable=False)
-    valor_total = Column(Float, default=0.0, nullable=False)
-    valor_pago = Column(Float, default=0.0, nullable=False)
-    data_emissao = Column(DateTime(timezone=True), nullable=False)
-    data_vencimento = Column(DateTime(timezone=True), nullable=False)
+
+    # =========================
+    # Relacionamento
+    # =========================
+    ordem_servico_id = Column(
+        Integer,
+        ForeignKey("ordens_servico.id"),
+        nullable=False
+    )
+
+    # =========================
+    # Valores financeiros
+    # =========================
+    valor_total = Column(Numeric(10, 2), nullable=False)
+
+    valor_multa = Column(Numeric(10, 2), default=0)
+
+    valor_desconto = Column(Numeric(10, 2), default=0)
+
+    # =========================
+    # Datas
+    # =========================
+    data_emissao = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    data_vencimento = Column(Date, nullable=False)
+
     data_pagamento = Column(DateTime(timezone=True), nullable=True)
-    status_pagamento = Column(String(20), default="PENDENTE", nullable=False)
-    forma_pagamento = Column(String(50), nullable=True)
-    transacao_id = Column(String(100), nullable=True)
-    qr_code_pix = Column(String(255), nullable=True)
-    boleto_codigo = Column(String(255), nullable=True)
-    os_id = Column(Integer, nullable=False)
+
+    # =========================
+    # Status
+    # =========================
+    status = Column(String(20), default="PENDENTE")
+
+    # =========================
+    # Relationships
+    # =========================
+    ordem_servico = relationship(
+        "OrdemServico",
+        backref="contas_receber"
+    )

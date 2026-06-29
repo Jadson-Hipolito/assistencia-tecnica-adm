@@ -1,71 +1,42 @@
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel
-from typing import List, Optional
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
-router = APIRouter(prefix="/funcionarios", tags=["Funcionarios"])
+from backend.app.core.dependencies import get_db
+from backend.app.schemas.funcionario_schema import FuncionarioCreate, FuncionarioUpdate
+from backend.app.services.funcionario_service import FuncionarioService
 
-class FuncionarioCreate(BaseModel):
-    nome: str
-    email: str
-    senha: str
-    cpf: str
-    contato: str
-    salario: float
-    cargo: str
+router = APIRouter(prefix="/funcionarios", tags=["Funcionários"])
 
-class FuncionarioResponse(BaseModel):
-    id: int
-    nome: str
-    email: str
-    cpf: str
-    cargo: str
-    status: str
 
-# Dados em memória
-funcionarios_db = []
-next_id = 1
+@router.post("/")
+def create(data: FuncionarioCreate, db: Session = Depends(get_db)):
+    return FuncionarioService.create(db, data)
 
-@router.get("/", response_model=List[FuncionarioResponse])
-def listar_funcionarios():
-    """Listar todos os funcionários"""
-    return funcionarios_db
 
-@router.post("/", response_model=FuncionarioResponse, status_code=status.HTTP_201_CREATED)
-def criar_funcionario(data: FuncionarioCreate):
-    """Criar novo funcionário"""
-    global next_id
-    
-    funcionario = {
-        "id": next_id,
-        "nome": data.nome,
-        "email": data.email,
-        "cpf": data.cpf,
-        "cargo": data.cargo,
-        "status": "ATIVO"
-    }
-    funcionarios_db.append(funcionario)
-    next_id += 1
-    return funcionario
+@router.get("/")
+def list_all(db: Session = Depends(get_db)):
+    return FuncionarioService.list_all(db)
 
-@router.get("/{funcionario_id}", response_model=FuncionarioResponse)
-def buscar_funcionario(funcionario_id: int):
-    """Buscar funcionário por ID"""
-    for f in funcionarios_db:
-        if f["id"] == funcionario_id:
-            return f
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Funcionário não encontrado"
-    )
 
-@router.delete("/{funcionario_id}")
-def desativar_funcionario(funcionario_id: int):
-    """Desativar funcionário"""
-    for i, f in enumerate(funcionarios_db):
-        if f["id"] == funcionario_id:
-            funcionarios_db[i]["status"] = "INATIVO"
-            return {"message": "Funcionário desativado com sucesso"}
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Funcionário não encontrado"
-    )
+@router.get("/{id}")
+def get(id: int, db: Session = Depends(get_db)):
+    try:
+        return FuncionarioService.get_by_id(db, id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+
+@router.put("/{id}")
+def update(id: int, data: FuncionarioUpdate, db: Session = Depends(get_db)):
+    try:
+        return FuncionarioService.update(db, id, data)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+
+
+@router.delete("/{id}")
+def delete(id: int, db: Session = Depends(get_db)):
+    try:
+        return FuncionarioService.delete(db, id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc

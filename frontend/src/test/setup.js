@@ -1,13 +1,21 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
-// Mock do localStorage
+const storage = new Map()
+
 const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+  getItem: vi.fn((key) => (storage.has(key) ? storage.get(key) : null)),
+  setItem: vi.fn((key, value) => {
+    storage.set(key, String(value))
+  }),
+  removeItem: vi.fn((key) => {
+    storage.delete(key)
+  }),
+  clear: vi.fn(() => {
+    storage.clear()
+  }),
 }
+
 global.localStorage = localStorageMock
 
 // Mock do fetch

@@ -4,24 +4,27 @@
 
 O Sistema de Gestão de Assistência Técnica segue uma arquitetura em camadas, separando responsabilidades entre interface, lógica de negócio e persistência de dados.
 
+O sistema é utilizado exclusivamente por funcionários internos (administradores e técnicos).
+
 ```mermaid
 flowchart LR
-    Usuario --> Frontend
-    Frontend --> Backend
-    Backend --> Banco
 
-    subgraph Frontend
-        UI[Interface Web]
-    end
+    Funcionario --> React
+    React --> API
 
     subgraph Backend
-        API[API REST - FastAPI]
-        Regras[Regras de Negócio]
+        API["FastAPI REST API"]
+        Service["Services"]
+        ORM["SQLAlchemy"]
     end
 
     subgraph Banco
-        DB[(SQLite)]
+        DB["SQLite"]
     end
+
+    API --> Service
+    Service --> ORM
+    ORM --> DB
 ```
 ---
 
@@ -32,133 +35,208 @@ flowchart LR
 ## Diagrama da Arquitetura
 
 ```mermaid
-flowchart TB
-    subgraph CLIENTE["🖥️ CLIENTE (Navegador)"]
-        direction TB
-        HTML["📄 Páginas HTML<br/>(Login, Dashboard, Cliente, OS,<br/>Equipamento, Pagamento, Relatório, Garantia)"]
-        JS["⚡ JavaScript ES6 + Bootstrap 5<br/>(Interatividade, validações, fetch API)"]
-        HTML --> JS
+flowchart LR
+
+    FUNCIONARIO["👤 Funcionário (Usuário Interno)"] --> FRONTEND
+
+    subgraph FRONTEND["🖥️ Frontend"]
+        REACT["⚛️ React + Vite"]
+        ROUTES["🧭 React Router"]
+        AXIOS["🔗 Axios"]
+
+        REACT --> ROUTES --> AXIOS
     end
 
-    subgraph BACKEND["⚙️ BACKEND - SERVIDOR (WSL2 / Ubuntu)"]
-        direction TB
-        
-        UVICORN["🚀 Uvicorn Server (ASGI)<br/>Porta: 8000"]
-        FASTAPI["⚡ FastAPI Application"]
-        
-        subgraph MIDDLEWARE["🔧 Middleware Layer"]
-            M1["Static Files"] 
-            M2["Auth Middleware"]
-            M3["Log Request"] 
-            M4["CORS"]
+    AXIOS --> API
+
+    subgraph BACKEND["⚙️ Backend - FastAPI"]
+        UVICORN["🚀 Uvicorn Server"]
+        FASTAPI["⚡ FastAPI"]
+
+        subgraph MIDDLEWARE["🔧 Middleware"]
+            CORS["CORS"]
+            LOG["Logs"]
+            ERROR["Tratamento de Erros"]
         end
-        
-        subgraph ROUTER["🗺️ Router Layer"]
-            R1["Routes:<br/>/auth, /clientes, /funcionarios, /aparelhos,<br/>/os, /servicos, /equipamentos,<br/>/pagamentos, /relatorios"]
+
+        subgraph ROUTERS["🗺️ Router Layer"]
+            AUTH["/auth"]
+            CLIENTES["/clientes"]
+            FUNCIONARIOS["/funcionarios"]
+            EQUIPAMENTOS["/equipamentos"]
+            ORDEM_SERVICOS["/ordens-servico"]
+            SERVICOS["/servicos-executados"]
+            PECAS["/equipamentos-usados"]
+            CONTAS["/contas-receber"]
+            NOTIFICACOES["/notificacoes"]
+            RELATORIOS["/relatorios"]
         end
-        
-        subgraph CONTROLLER["🎮 Controller Layer (Views)"]
-            C1["Auth Views"] 
-            C2["Cliente Views"]
-            C3["OS Views"] 
-            C4["Pagamento Views"]
-            C5["Equipam. Views"] 
-            C6["Serviço Views"]
-            C7["Relatório Views"] 
-            C8["Garantia Views"]
+
+        subgraph SERVICES["📦 Service Layer"]
+            AUTH_SERVICE["Auth Service"]
+            CLIENTE_SERVICE["Cliente Service"]
+            FUNC_SERVICE["Funcionario Service"]
+            OS_SERVICE["OrdemServico Service"]
+            FIN_SERVICE["Financeiro Service"]
         end
-        
-        subgraph SERVICE["📦 Service Layer (Opcional)"]
-            S1["Auth Service"] 
-            S2["Cliente Service"]
-            S3["OS Service"] 
-            S4["Pagamento Service"]
+
+        subgraph REPOSITORIES["🗄️ Repository Layer"]
+            CLIENTE_REPO["Cliente Repository"]
+            FUNC_REPO["Funcionario Repository"]
+            OS_REPO["OrdemServico Repository"]
+            FIN_REPO["ContaReceber Repository"]
         end
-        
-        subgraph MODEL["🗃️ Model Layer (SQLAlchemy ORM)"]
-            M_MOD1["Usuario Model"]
-            M_MOD2["Cliente Model"]
-            M_MOD3["Funcionario Model"]
-            M_MOD4["Aparelho Model"]
-            M_MOD5["Servico Model"]
-            M_MOD6["Equipamento Model"]
-            M_MOD7["Conta_Receber Model"]
-            M_MOD8["Visita_Tec Model"]
+
+        subgraph MODELS["🗃️ Model Layer (SQLAlchemy)"]
+            CLIENTE["Cliente"]
+            FUNCIONARIO["Funcionario"]
+            EQUIPAMENTO["Equipamento"]
+            ORDEM["OrdemServico"]
+            SERVICO["ServicoExecutado"]
+            PECA["EquipamentoUsado"]
+            CONTA["ContaReceber"]
+            NOTIF["Notificacao"]
         end
-        
-        subgraph TEMPLATE["🎨 Template Layer (Jinja2)"]
-            T1["base.html"]
-            T2["auth/"]
-            T3["clientes/"]
-            T4["os/"]
-            T5["pagamentos/"]
-            T6["relatorios/"]
-        end
-        
+
         UVICORN --> FASTAPI
         FASTAPI --> MIDDLEWARE
-        MIDDLEWARE --> ROUTER
-        ROUTER --> CONTROLLER
-        CONTROLLER --> SERVICE
-        SERVICE --> MODEL
-        MODEL --> TEMPLATE
+        MIDDLEWARE --> ROUTERS
+        ROUTERS --> SERVICES
+        SERVICES --> REPOSITORIES
+        REPOSITORIES --> MODELS
     end
 
-    subgraph DATABASE["💾 BANCO DE DADOS (SQLite)"]
-        DB1["database.sqlite"]
-        TABLES["📋 Tabelas:<br/>usuario, cliente, funcionario, aparelho,<br/>ordem_servico, servico, equipamento,<br/>conta_receber, visita_tecnica, notificacao"]
+    subgraph DATABASE["💾 Banco de Dados"]
+        DB["SQLite"]
     end
 
-    CLIENTE -- "🌐 HTTP / POST / GET / PUT" --> BACKEND
-    BACKEND --> DATABASE
+    MODELS --> DB
 ```
 ---
 
 # Descrição dos Componentes
 
-## 1. CLIENTE (Frontend - Navegador)
+## 1. Usuário Interno
 
-| Componente | Descrição |
-|------------|-----------|
-| **Páginas HTML** | Interfaces de usuário: Login, Dashboard, Clientes, Ordem de Serviço, Equipamentos, Pagamentos, Relatórios e Garantia |
-| **JavaScript ES6 + Bootstrap 5** | Interatividade, validações frontend, chamadas fetch API à API backend |
+O sistema é utilizado exclusivamente por funcionários autorizados da assistência técnica, como administradores e técnicos. Os clientes não possuem acesso direto à aplicação.
+
+| Componente   | Descrição                                                                                   |
+| ------------ | ------------------------------------------------------------------------------------------- |
+| React        | Biblioteca responsável pela construção da interface                                         |
+| Vite         | Ferramenta de desenvolvimento e build                                                       |
+| React Router | Gerenciamento das rotas da aplicação                                                        |
+| Axios        | Comunicação com a API REST                                                                  |
+| Componentes  | Elementos reutilizáveis da interface                                                        |
+| Páginas      | Dashboard, Clientes, Equipamentos, Funcionários, Ordens de Serviço, Financeiro e Relatórios |
+| Vitest       | Testes unitários e de integração do frontend                                                |
 
 ---
 
-## 2. BACKEND - SERVIDOR (WSL2 / Ubuntu)
+## 2. BACKEND - SERVIDOR 
 
-| Camada | Componente | Descrição |
-|--------|------------|-----------|
-| **Servidor ASGI** | Uvicorn | Servidor web assíncrono na porta 8000 |
-| **Framework** | FastAPI | Framework moderno para APIs REST com documentação automática |
-| **Middleware** | Static Files, Auth, Log, CORS | Arquivos estáticos, autenticação, logs e CORS |
-| **Router Layer** | Rotas organizadas | Endpoints: /auth, /clientes, /funcionarios, /aparelhos, /os, /servicos, /equipamentos, /pagamentos, /relatorios |
-| **Controller Layer** | Views | Controlam fluxo das requisições e preparam respostas |
-| **Service Layer** | Services (Opcional) | Lógica de negócio da aplicação |
-| **Model Layer** | SQLAlchemy ORM | Mapeamento ORM: Usuario, Cliente, Funcionario, Aparelho, Servico, Equipamento, Conta_Receber, Visita_Tec |
-| **Template Layer** | Jinja2 | Renderização de HTML dinâmico no servidor |
+| Camada           | Componente                      | Descrição                                    |
+| ---------------- | ------------------------------- | -------------------------------------------- |
+| Servidor ASGI    | Uvicorn                         | Responsável por executar a aplicação FastAPI |
+| Framework        | FastAPI                         | Criação da API REST                          |
+| Middleware       | CORS, Logs, Tratamento de Erros | Processamento das requisições                |
+| Router Layer     | Routers                         | Recebem e direcionam requisições HTTP        |
+| Service Layer    | Services                        | Implementam regras de negócio                |
+| Repository Layer | Repositories                    | Isolam o acesso aos dados                    |
+| Model Layer      | SQLAlchemy ORM                  | Representação das entidades do sistema       |
+| Schema Layer     | Pydantic                        | Validação e serialização dos dados           |
+| Testes           | Pytest                          | Testes unitários e integração                |
 
 ---
 
 ## 3. BANCO DE DADOS (SQLite)
 
-| Componente | Descrição |
-|------------|-----------|
-| **database.sqlite** | Arquivo único com todos os dados da aplicação |
-| **Tabelas** | usuario, cliente, funcionario, aparelho, ordem_servico, servico, equipamento, conta_receber, visita_tecnica, notificacao |
+| Componente      | Descrição                                                    |
+| --------------- | ------------------------------------------------------------ |
+| database.sqlite | Arquivo responsável pelo armazenamento dos dados             |
+| SQLAlchemy      | Camada ORM utilizada para acesso ao banco                    |
+| SQLite          | Sistema Gerenciador de Banco de Dados utilizado pelo projeto |
 
 ---
 
 ## Fluxo de Dados
 
-1. **Cliente** acessa página HTML no navegador
-2. **JavaScript** interage com usuário e faz requisições HTTP
-3. **Uvicorn** recebe requisição e entrega ao FastAPI
-4. **Middleware** processa autenticação, CORS e logs
-5. **Router** direciona para o Controller adequado
-6. **Controller** (opcionalmente) chama o Service
-7. **Model** (SQLAlchemy) consulta/persiste dados no SQLite
-8. **Resposta** (JSON ou HTML via Jinja2) retorna ao cliente
+O Sistema de Gestão de Assistência Técnica utiliza uma arquitetura em camadas para garantir a separação de responsabilidades entre a interface do usuário, a lógica de negócio e a persistência de dados.
 
+Toda interação segue o fluxo abaixo:
 
+```mermaid
+sequenceDiagram
 
+participant U as Usuário Interno
+participant FE as Frontend React
+participant API as FastAPI
+participant R as Router
+participant S as Service
+participant Repo as Repository
+participant DB as SQLite
+
+U->>FE: Realiza operação no sistema
+
+FE->>API: Requisição HTTP
+
+API->>R: Encaminha requisição
+
+R->>S: Executa regra de negócio
+
+S->>Repo: Solicita acesso aos dados
+
+Repo->>DB: Consulta ou grava dados
+
+DB-->>Repo: Retorna resultado
+
+Repo-->>S: Dados processados
+
+S-->>R: Resultado da operação
+
+R-->>API: Resposta
+
+API-->>FE: JSON
+
+FE-->>U: Atualiza interface
+```
+
+## Descrição do Fluxo
+
+1. Um funcionário autorizado (administrador ou técnico) realiza uma ação na interface do sistema.
+2. O frontend React processa a ação e envia uma requisição HTTP para a API.
+3. O FastAPI recebe a requisição e encaminha para o Router correspondente.
+4. O Router direciona a solicitação para o Service responsável.
+5. O Service executa as regras de negócio da aplicação.
+6. Quando necessário, o Service utiliza o Repository para acessar os dados.
+7. O Repository realiza consultas, inserções, atualizações ou exclusões no banco de dados utilizando os Models definidos com SQLAlchemy.
+8. O banco de dados SQLite processa a operação e retorna os resultados ao Repository.
+9. O Repository devolve os dados ao Service para tratamento e preparação da resposta.
+10. O Service retorna o resultado ao Router, que o encaminha ao FastAPI.
+11. O FastAPI gera uma resposta em formato JSON e a envia ao frontend.
+12. O frontend recebe os dados e atualiza a interface apresentada ao funcionário.
+
+### Exemplo: Cadastro de Cliente
+
+1. O funcionário acessa a tela de cadastro de clientes.
+2. O formulário é preenchido com os dados do cliente.
+3. O React realiza validações básicas dos campos.
+4. O Axios envia uma requisição POST para /api/clientes.
+5. O FastAPI recebe a requisição e a encaminha para o serviço responsável.
+6. O Service valida as regras de negócio.
+7. O Repository utiliza o SQLAlchemy para persistir os dados no SQLite.
+8. O banco retorna a confirmação da operação.
+9. A API responde com status HTTP 201 (Created).
+10. O frontend atualiza a listagem de clientes.
+
+### Exemplo: Abertura de Ordem de Serviço
+
+1. O funcionário seleciona o cliente e o equipamento.
+2. O técnico responsável é definido.
+3. Os dados da ordem de serviço são informados.
+4. O frontend envia uma requisição para a API.
+5. O Service valida as informações recebidas.
+6. O Repository registra a Ordem de Serviço no banco de dados.
+7. O sistema pode gerar automaticamente uma Conta a Receber vinculada à OS.
+8. Uma notificação pode ser criada para acompanhamento do serviço.
+9. A API retorna os dados da nova ordem de serviço.
+10. O frontend atualiza a interface com as informações cadastradas.

@@ -2,20 +2,19 @@
 
 | ID   | Título      | Descrição                                                     | Requisitos Funcionais | Responsável |
 |------|-------------|---------------------------------------------------------------|----------------------|--------------|
-| US00 | Manter Usuário | Permite login, recuperação de senha e logout para todos os perfis de usuário. O email será o login e ele pode registrar-se diretamente no sistema. Além disso o usuário poderá alterar alguns dados, como o e-mail ou a senha. O usuário administrador do sistema pode realizar as operações de cadastrar, atualizar, consultar, desativar e listar os usuários comuns do sistema.| RF00 | Mariana |     
-| US01 | Manter cliente | O sistema deve manter um cadastro de cliente que tem acesso ao sistema via login e senha. Um cliente tem os atributos nome, id, endereço, contato. O usuário administrador do sistema pode realizar as operações de cadastrar, atualizar, consultar, desativar e listar os clientes do sistema.| RF01 | Jadson |
-| US02 | Manter Funcionario | O sistema deve manter um cadastro de funcionário que tem acesso ao sistema via login e senha. Um funcionário tem os atributos id, nome, cpf, contato, salario, data_admissao, horario_expediente, status.  O usuário administrador do sistema pode realizar as operações de cadastrar, atualizar, consultar e desativar funcionario do sistema.  | RF02 | Mariana    |
-| US03 | Gerenciar Aparelho | O sistema deve manter um cadastro de aparelho de um cliente. Um aparelho tem os atributos id, tipo, marca, modelo, numero_serie, cor, observações, cliente_id | RF03 | Jadson |
-| US04 | Gerenciar Ordem_Serviço | Permite ao administrador abrir, consultar, atualizar, encerrar ordens de serviço | RF04 | Mariana |
-| US05 | Manter Serviço | Permite ao usuário administrador gerenciar o catálogo de serviços oferecidos pela assistência técnica, incluindo cadastro, consulta, atualização e desativação de serviços, com seus respectivos valores padrão e tempo estimado de execução.| RF05 | Jadson |
-| US06 | Registrar Serviço_Executado | Registra a execução de um serviço específico em uma ordem de serviço, com controle de tempo real, técnico responsável e cálculo automático de comissão.| RF06 | Mariana |
-| US07 | Gerenciar Equipamento | Permite ao administrador cadastrar, consultar, atualizar e desativar equipamentos/peças utilizados nos serviços. | RF07 | Jadson |
-| US08 | Gerenciar Equipamento_Usado | Permite associar equipamentos a uma ordem de serviço.| RF08 | Mariana |
-| US09 | Agendar Visita_Técnica | Permite ao administrador agendar visitas e ao técnico registrar a realização das visitas técnicas vinculadas a uma OS.| RF09 | Jadson |
-| US10 |Gerenciar Conta_Receber | Gerencia automaticamente as contas a receber com valor_total da OS, data_emissão atual e data_vencimento calculada e permite registrar pagamentos (offline e online), incluindo marcar conta como paga. | RF10 | Mariana |
-| US11 | Gerenciar Pagamento | Registra cada transação de pagamento realizada, permitindo que uma única conta a receber tenha múltiplos pagamentos (parcelado).| RF11 | Jadson |
-| US12 | Gerar Relatório | Permite gerar um relatório de ordens de serviço filtrado por período de abertura, status e técnico responsável, com opção de exportação.| RF12 | Mariana |
-| US13 | Controle de Garantia | Permite consultar e controlar o período de garantia das ordens de serviço finalizadas, com alerta para garantias próximas do vencimento ou já expiradas.| RF13| Jadson |
+| US00 | Autenticação | Permite que funcionários realizem login, logout e recuperação de senha utilizando e-mail e senha. | Jadson |
+| US01 | Manter Funcionario |  O usuário administrador do sistema pode realizar as operações de cadastrar, atualizar, consultar, desativar e listar os usuários comuns do sistema.| RF01 | Mariana |     
+| US02 | Manter cliente | O sistema deve manter um cadastro de cliente que não possuir acesso ao sistema. Um cliente tem os atributos nome, id, endereço, contato. O usuário administrador do sistema pode realizar as operações de cadastrar, atualizar, consultar, desativar  clientes do sistema.| RF02 | Jadson |
+| US03 | Gerenciar Aparelho | O sistema deve manter um cadastro de aparelho de um cliente. Um aparelho tem os atributos id, tipo, marca, modelo, numero_serie, cliente_id | RF03 | Mariana |
+| US04 | Gerenciar Ordem_Serviço | Permite ao administrador abrir, consultar, atualizar, encerrar ordens de serviço | RF04 | Jadson |
+| US05 | Gerenciar Serviço | Permite ao usuário administrador gerenciar o catálogo de serviços oferecidos pela assistência técnica, incluindo cadastro, consulta, atualização e desativação de serviços, com seu respectivo valor padrão.| RF05 | Mariana |
+| US06 | Registrar OrdemServicoServico | Relaciona os serviços executados em uma ordem de serviço.| RF06 | Jadson |
+| US07 | Gerenciar Equipamento | Permite ao administrador cadastrar, consultar, atualizar e desativar equipamentos/peças utilizados nos serviços. | RF07 | Mariana |
+| US08 | Agendar Visita_Técnica | Permite ao administrador agendar visitas vinculadas a uma OS.| RF08 | Jadson |
+| US09 |Gerenciar Conta_Receber | Gerencia automaticamente as contas a receber com valor_total da OS, data_emissão atual e data_vencimento calculada e permite registrar pagamentos (offline e online), incluindo marcar conta como paga. | RF09 | Mariana |
+| US10 | AuditoriaLog | Registra as operações realizadas pelos funcionários.| RF10 | Jadson |
+| US11 | Gerar Relatório | Permite gerar um relatórios com opções filtração e de exportação.| RF11 | Mariana |
+| US12 | Controle de Garantia | Permite consultar e controlar o período de garantia das ordens de serviço finalizadas, com alerta para garantias próximas do vencimento ou já expiradas.| RF12| Jadson |
 | 
 ---
 # Documento Lista de User Stories
@@ -45,51 +44,15 @@ Este documento descreve os User Stories criados a partir da Lista de Requisitos 
 
 ---
 
-## US00 - Manter Usuário
+## US00 - Autenticação
 
 **Descrição:**
-Permite login, recuperação de senha e logout para todos os perfis de usuário.
+Permite que funcionários realizem autenticação no sistema por meio de e-mail e senha, além de permitir encerramento de sessão e recuperação de senha, garantindo acesso seguro às funcionalidades do sistema.
 
 **Requisitos:** RF00.1, RF00.2, RF00.3
 
 **Prioridade:** Essencial
 **Estimativa:** 8h
-
-**Responsáveis:**
-- Analista: Mariana
-- Desenvolvedor: Mariana
-- Revisor: Jadson
-- Testador: Mariana
-
-**Testes de Aceitação:**
-- Cadastro de usuário
-- Alteração de e-mail
-- Alteração de senha
-- Cadastro de usuários comuns pelo administrador
-- Consulta/listagem de usuários
-- Desativação de usuários
-- Login realizado com sucesso com credenciais válidas
-- E-mail ou senha incorretos geram erro
-- Apenas usuários ativos podem acessar
-- Sessão expira após inatividade (30 minutos)
-- Senha deve ser armazenada de forma criptografada no banco de dados
-- Login com e-mail e senha gera token JWT
-- Senha armazenada com hash (bcrypt)
-- Recuperar senha com link único (token temporário - 1 hora)
-- Sessão expira após 30 minutos
-- Logout invalida token
-- Token contém perfil (cliente/tecnico/administrador)
-
-
-## US01 - Manter Cliente
-
-**Descrição:**  
-Permite ao usuário administrador realizar todas as operações de gestão de clientes: cadastrar, atualizar, consultar e desativar clientes (PF e PJ).
-
-**Requisitos:** RF01.1, RF01.2, RF01.3, RF01.4  
-
-**Prioridade:** Essencial  
-**Estimativa:** 8h  
 
 **Responsáveis:**  
 - Analista: Jadson  
@@ -97,24 +60,21 @@ Permite ao usuário administrador realizar todas as operações de gestão de cl
 - Revisor: Mariana  
 - Testador: Jadson  
 
-**Testes de Aceitação:**  
-- Cadastrar cliente com CPF (PF) ou CNPJ (PJ) válido  
-- Atualizar dados de cliente existente  
-- Consultar cliente por ID, nome, CPF, CNPJ ou contato
-- Desativar cliente 
-- CPF/CNPJ duplicado gera erro
-- Cliente com OS em aberto não pode ser desativado
-- Validação de campos obrigatórios (nome, contato, documento)
-- Listar todos os cliente
+**Testes de Aceitação:**
+- Login realizado com e-mail e senha válidos
+- E-mail ou senha incorretos retornam erro de autenticação
+- Apenas usuários ativos podem acessar o sistema
+- Usuário consegue encerrar sessão (logout) com sucesso
+- Sessão expira após 30 minutos de inatividade
 
 ---
 
-## US02 - Manter Funcionário
+## US01 - Manter Funcionário
 
 **Descrição:**  
 Permite ao usuário administrador gerenciar funcionários, incluindo cadastro, atualização, consulta e desativação, com classificação em Técnico ou Administrativo.
 
-**Requisitos:** RF02.1, RF02.2, RF02.3, RF02.4  
+**Requisitos:** RF01.1, RF01.2, RF01.3, RF01.4 
 
 **Prioridade:** Essencial  
 **Estimativa:** 8h  
@@ -133,17 +93,18 @@ Permite ao usuário administrador gerenciar funcionários, incluindo cadastro, a
 - CPF duplicado gera erro
 - Funcionário com OS em aberto não pode ser desativado
 - Listar todos os funcionários
+
 ---
 
-## US03 - Gerenciar Aparelho
+## US02 - Manter Cliente
 
-**Descrição:**
-O sistema deve manter um cadastro de aparelho de um cliente. Um aparelho tem os atributos id, tipo, marca, modelo, numero_serie, cor, observações, cliente_id.
+**Descrição:**  
+Permite ao usuário administrador realizar todas as operações de gestão de clientes: cadastrar, atualizar, consultar e desativar clientes (PF e PJ).
 
-**Requisitos:** RF03.1, RF03.2, RF03.3, RF03.4
+**Requisitos:**  RF02.1, RF02.2, RF02.3, RF02.4 
 
 **Prioridade:** Essencial  
-**Estimativa:**  6h
+**Estimativa:** 8h  
 
 **Responsáveis:**  
 - Analista: Jadson  
@@ -151,20 +112,46 @@ O sistema deve manter um cadastro de aparelho de um cliente. Um aparelho tem os 
 - Revisor: Mariana  
 - Testador: Jadson  
 
+**Testes de Aceitação:**  
+- Cadastrar cliente com CPF (PF) ou CNPJ (PJ) válido  
+- Atualizar dados de cliente existente  
+- Consultar cliente por ID, nome, CPF, CNPJ ou contato
+- Desativar cliente 
+- Listar todos os cliente
+- CPF/CNPJ duplicado gera erro
+- Cliente com OS em aberto não pode ser desativado
+- Validação de campos obrigatórios (nome, contato, documento)
+
+---
+
+## US03 - Gerenciar Aparelho
+
+**Descrição:**
+O sistema deve manter um cadastro de aparelho de um cliente. Um aparelho tem os atributos id, tipo, marca, modelo, numero_serie, cliente_id.
+
+**Requisitos:** RF03.1, RF03.2, RF03.3, RF03.4
+
+**Prioridade:** Essencial  
+**Estimativa:**  6h
+
+ **Responsáveis:**  
+- Analista: Mariana  
+- Desenvolvedor: Mariana  
+- Revisor: Jadson  
+- Testador: Mariana 
+
 **Testes de Aceitação:**
 - Cadastrar um novo aparelho vinculado a um cliente_id existente
-- Consultar aparelho por id, numero_serie, modelo ou cliente_id
-- Atualizar informações como cor ou observações de um aparelho
-- Tentar cadastrar um aparelho com um numero_serie já existente no sistema deve gerar um erro de duplicidade
+- Atualizar dados do aparelho
+- Consultar aparelho por id, numero_serie, ou cliente_id
 - Excluir (desativar logicamente) um aparelho. Um aparelho com OS em andamento não pode ser desativado
-- Listar todos os aparelhos de um cliente específico
 
 ---
 
 ## US04 - Gerenciar Ordem_Serviço 
 
 **Descrição:** 
-Permite ao cliente solicitar abertura de ordem de serviço para seus aparelhos. Permite ao administrador e técnico consultar, editar, atualizar o status e encerrar ordens de serviço conforme o andamento do atendimento.
+Permite ao administrador e técnico consultar, editar, atualizar o status e encerrar ordens de serviço conforme o andamento do atendimento.
 
 **Requisitos:** RF04.1, RF04.2, RF04.3, RF04.4, RF04.5.
 
@@ -172,31 +159,29 @@ Permite ao cliente solicitar abertura de ordem de serviço para seus aparelhos. 
 **Estimativa:**  12h
 
 **Responsáveis:**  
-- Analista: Mariana  
-- Desenvolvedor: Mariana  
-- Revisor: Jadson  
-- Testador: Mariana  
+- Analista: Jadson  
+- Desenvolvedor: Jadson  
+- Revisor: Mariana  
+- Testador: Jadson  
 
 **Testes de Aceitação:**
-- Cliente pode abrir uma solicitação de serviço para um aparelho cadastrado
-- A OS criada pelo cliente recebe status inicial ABERTA
-- Editar OS (descrição, técnico) - apenas se não finalizada
-- Consultar OS por ID, cliente, período ou status
-- Encerrar OS com status FINALIZADA e data_encerramento atual
-- Cliente pode consultar apenas suas próprias OS
-- Técnico só vê OS onde é responsável
-- OS com status FINALIZADA ou CANCELADA não pode ser editada
+- Funcionário registra uma nova Ordem de Serviço para um cliente cadastrado.
+- A Ordem de Serviço criada recebe status inicial ABERTA
+- Editar Ordem de Serviço (descrição, técnico) - apenas se não finalizada
+- Consultar Ordem de Serviço por ID, cliente, período ou status
+- Encerrar Ordem de Serviço com status FINALIZADA e data_encerramento atual
+- Técnico só vê Ordem de Serviço onde é responsável
+- Ordem de Serviço com status FINALIZADA ou CANCELADA não pode ser editada
 - Status disponíveis: ABERTA, EM_ANDAMENTO, AGUARDANDO_PECA, FINALIZADA, CANCELADA
-- Técnico só altera OS onde é responsável
-- Status inválido gera erro
-- CANCELADA só permitido para OS em ABERTA ou EM_ANDAMENTO
+- Técnico só altera Ordem de Serviço onde é responsável
+- CANCELADA só permitido para Ordem de Serviço em ABERTA ou EM_ANDAMENTO
 
 ---
 
-## US05 - Manter Serviço
+## US05 - Gerenciar Serviço
 
 **Descrição:**  
-Permite ao usuário administrador gerenciar o catálogo de serviços oferecidos pela assistência técnica, incluindo cadastro, consulta, atualização e desativação de serviços, com seus respectivos valores padrão e tempo estimado de execução.
+Permite ao administrador gerenciar o catálogo de serviços oferecidos pela assistência técnica, incluindo cadastro, consulta, atualização e desativação de serviços, com seus respectivos valores padrão.
 
 **Requisitos:** RF05.1, RF05.2, RF05.3, RF05.4  
 
@@ -204,54 +189,50 @@ Permite ao usuário administrador gerenciar o catálogo de serviços oferecidos 
 **Estimativa:** 4h  
 
 **Responsáveis:**  
+- Analista: Mariana  
+- Desenvolvedor: Mariana  
+- Revisor: Jadson  
+- Testador: Mariana 
+
+
+**Testes de Aceitação:**
+- Cadastrar um novo serviço com nome, descrição, valor_padrao (R$)
+- Consultar serviços por id, nome 
+- Atualizar o valor_padrao de um serviço existente
+- Tentar cadastrar um serviço com nome duplicado deve gerar um erro
+
+---
+
+### US06 - Registrar OrdemServicoServico
+
+**Descrição:** 
+Permite registrar os serviços executados em uma Ordem de Serviço, vinculando os serviços realizados ao atendimento do cliente, permitindo controle do que foi executado e composição do valor final
+
+**Requisito Funcional Sugerido:** RF06.1,RF06.2, RF06.3
+
+**Prioridade:** Essencial
+**Estimativa:** 6h
+
+ **Responsáveis:**  
 - Analista: Jadson  
 - Desenvolvedor: Jadson  
 - Revisor: Mariana  
 - Testador: Jadson  
 
 **Testes de Aceitação:**
-- Cadastrar um novo serviço com nome, descrição, valor_padrao (R$), tempo_estimado (minutos) e status (ATIVO)
-- Consultar serviços por id, nome ou filtro por status (ATIVO/INATIVO)
-- Atualizar o valor_padrao e o tempo_estimado de um serviço existente
-- Desativar (status = INATIVO) um serviço. Serviços vinculados a OS em aberto não podem ser desativados
-- Tentar cadastrar um serviço com nome duplicado deve gerar um erro
-- A listagem de serviços para uso em uma nova OS deve exibir apenas os serviços com status = ATIVO  
+- É possível vincular um ou mais serviços a uma Ordem de Serviço
+- Apenas Ordens de Serviço abertas podem receber serviços
+- Os serviços registrados ficam associados corretamente à OS
+- O sistema calcula automaticamente o valor total dos serviços
+- A comissão do técnico é calculada automaticamente com base nos serviços executados
+- Não é permitido adicionar serviços em uma Ordem de Serviço finalizada
 
 ---
-
-### US06 - Registrar Serviço_Executado
-
-**Descrição:** 
-Permite ao técnico registrar a execução de serviços individuais dentro de uma OS, com tempo real gasto e validação.
-
-**Requisito Funcional Sugerido:** RF06.1,RF06.2, RF06.3, RF06.4, RF06.5, RF06.6, RF06.7, RF06.8, RF06.9, RF06.10, RF06.11
-
-**Prioridade:** Importante
-**Estimativa:** 6h
-
-**Responsáveis:**  
-- Analista: Mariana  
-- Desenvolvedor: Mariana  
-- Revisor: Jadson  
-- Testador: Mariana  
-
-**Testes de Aceitação:**
-- Técnico inicia e para cronômetro para cada serviço
-- Sistema registra tempo real gasto
-- Comissão calculada automaticamente baseada no serviço + técnico
-- Registrar serviço em uma OS
-Pausar execução
-Retomar execução
-Finalizar execução
-Calcular data_fim_garantia
-Consultar serviços executados por técnico
-Consultar serviços executados por período
-Verificar garantia ativa
 
 ## US07 - Gerenciar Equipamento
 
 **Descrição:**  
-Permite cadastrar equipamentos, listar, consultar e desativar equipamentos.
+Permite cadastrar equipamentos, alterar e consultar equipamentos.
 
 **Requisitos:** RF07.1, RF07.2, RF07.3, RF07.4  
 
@@ -259,53 +240,29 @@ Permite cadastrar equipamentos, listar, consultar e desativar equipamentos.
 **Estimativa:** 6h  
 
 **Responsáveis:**  
-- Analista: Jadson  
-- Desenvolvedor: Jadson  
-- Revisor: Mariana  
-- Testador: Jadson  
-
-**Testes de Aceitação:**  
-- Equipamento cadastrado com sucesso 
-- Listar equipamentos
-- Consultar equipamento por ID, código, tipo ou modelo
-- Desativar equipamento 
-- Código duplicado gera erro
-- Equipamento vinculado a OS em aberto não pode ser desativado
-
----
-
-## US08 - Gerenciar Equipamento_Usado
-
-**Descrição:**  
-Controla os equipamentos/peças utilizados em um serviço executado.
-
-**Requisitos:** RF08.1, RF08.2, RF08.3, RF08.4  
-
-**Prioridade:** Essencial  
-**Estimativa:** 4h  
-
-**Responsáveis:**  
 - Analista: Mariana  
 - Desenvolvedor: Mariana  
 - Revisor: Jadson  
-- Testador: Mariana  
+- Testador: Mariana
+  
 
 **Testes de Aceitação:**  
-- Equipamento vinculado à OS com quantidade > 0 
-- Equipamento inexistente gera erro  
+- Equipamento cadastrado com sucesso 
+- Consultar equipamento por ID, código, tipo ou modelo
+- Código duplicado gera erro
 
 ---
 
-## US09 - Agendar Visita_Técnica
+## US08 - Agendar Visita_Técnica
 
 **Descrição:**  
 Permite ao administrador agendar visitas e ao técnico registrar a realização das visitas técnicas vinculadas a uma OS.
 
-**Requisitos:** RF09.1, RF09.2  
+**Requisitos:** RF08.1, RF08.2, RF08.3 
 
 **Prioridade:** Importante  
 **Estimativa:** 5h  
-
+ 
 **Responsáveis:**  
 - Analista: Jadson  
 - Desenvolvedor: Jadson  
@@ -322,12 +279,12 @@ Permite ao administrador agendar visitas e ao técnico registrar a realização 
 
 ---
 
-## US10 - Gerenciar Conta_Receber
+## US09 - Gerenciar Conta_Receber
 
 **Descrição:**  
 Gerencia automaticamente as contas a receber com valor_total da OS, data_emissão atual e data_vencimento calculada.
 
-**Requisitos:** RF10.1, RF10.2, RF10.3, RF10.4, RF10.5, RF10.6, RF10.7, RF10.8 
+**Requisitos:** RF09.1, RF09.2, RF09.3, RF09.4, RF09.5, RF09.6, RF09.7, RF09.8 
 
 **Prioridade:** Essencial  
 **Estimativa:** 8h  
@@ -345,17 +302,22 @@ Gerencia automaticamente as contas a receber com valor_total da OS, data_emissã
 - Data_emissão = data atual
 - Data_vencimento calculada corretamente
 - OS sem valor_total válido impede encerramento 
-
+- Funcionário registra pagamento offline ou online da conta.
+- Status alterado para PAGO com data_pagamento atual
+- Conta já paga não pode ser alterada
+- Conta vencida pode ser paga com multa
+- Marcar conta como paga (status PAGO com data_pagamento atual)
+- Conta com status PAGO não pode ser alterada novamente
 
 ---
 
-## US11 - Gerenciar Pagamento
-Permite registrar pagamentos online (cliente) e offline (administrador), incluindo marcar conta como paga e emitir comprovante.
+## US10 - AuditoriaLog
+Permite registrar automaticamente as ações realizadas pelos funcionários no sistema e consultar o histórico de operações, garantindo rastreabilidade e controle das atividades.
 
-**Requisitos:** RF11.1, RF11.2, RF11.3, RF11.4, RF11.5, RF11.6  
+**Requisitos:** RF10.1, RF10.2  
 
 **Prioridade:** Essencial  
-**Estimativa:** 6h  
+**Estimativa:** 5h  
 
 **Responsáveis:**
 - Analista: Jadson
@@ -364,24 +326,23 @@ Permite registrar pagamentos online (cliente) e offline (administrador), incluin
 - Testador: Jadson
 
 **Testes de Aceitação:** 
-- Cliente realiza pagamento online via gateway integrado
-- Status alterado para PAGO com data_pagamento atual
-- Conta já paga não pode ser alterada
-- Conta vencida pode ser paga com multa
-- Marcar conta como paga (status PAGO com data_pagamento atual)
-- Conta com status PAGO não pode ser alterada novamente
-- Uma conta pode ser paga em múltiplas parcelas, gerando registros de pagamento distintos
-- Sistema controla o saldo devedor da conta a receber
-- Quando o somatório dos pagamentos igualar o valor_total, a conta é marcada como PAGA
+- O sistema registra automaticamente ações realizadas por funcionários
+- Cada registro de auditoria contém informações como usuário, ação realizada e data/hora
+- Ações críticas do sistema são obrigatoriamente registradas em log
+- O administrador consegue consultar o histórico de auditoria
+- É possível filtrar logs por usuário, data ou tipo de ação
+- Registros de auditoria não podem ser alterados ou excluídos
+- O sistema mantém histórico completo das operações realizadas
+- Tentativas de acesso ou ações inválidas também são registradas no log
 
 ---
 
-## US12 - Gerar Relatório
+## US11 - Gerar Relatório
 
 **Descrição:**
-Permite gerar um relatório de ordens de serviço filtrado por período de abertura, status e técnico responsável, com opção de exportação (PDF/CSV).
+Permite gerar um relatório de ordens de serviço filtrado, com opção de exportação (PDF/CSV).
 
-**Requisitos:** RF12.1, RF12.2, RF12.3, RF12.4
+**Requisitos:** RF11.1, RF11.2, RF11.3
 
 **Prioridade:** Importante
 **Estimativa:** 6h
@@ -396,12 +357,14 @@ Permite gerar um relatório de ordens de serviço filtrado por período de abert
 - Relatório gerado com sucesso no período selecionado
 - Filtro por status funciona
 - Filtro por técnico funciona
-- Exibe: ID da OS, usuario, data_abertura, data_encerramento, status, valor_total
+- Exibe: ID da OS, data_abertura, data_encerramento, status, valor_total
+- Listar todos os aparelhos de um cliente específico
 - Listar OS por cliente específico
 - Listar OS por funcionário específico
 - Listar OS por aparelhos de um cliente específico
 - Listar OS por periodo
 - Listar OS por status
+- A listagem de serviços para uso em uma nova OS deve exibir apenas os serviços com status = ATIVO
 - Relatório de produtividade por técnico/período
 - Exibe totalizadores (quantidade de OS e valor total no período)
 - Período inválido (data_fim < data_início) gera erro
@@ -409,12 +372,12 @@ Permite gerar um relatório de ordens de serviço filtrado por período de abert
 
 ---
 
-## US13 - Controle de Garantia 
+## US12 - Controle de Garantia 
 
 **Descrição:**
 Permite consultar e controlar o período de garantia das ordens de serviço finalizadas, com alerta para garantias próximas do vencimento ou já expiradas.
 
-**Requisitos:** RF13.1, RF13.2, RF13.3
+**Requisitos:** RF12.1, RF12.2, RF12.3
 
 **Prioridade:** Importante
 **Estimativa:** 5h
@@ -428,74 +391,46 @@ Permite consultar e controlar o período de garantia das ordens de serviço fina
 **Testes de Aceitação:**
 - Exibe OS com garantia ativa (dentro do prazo)
 - Exibe OS com garantia expirada (data_encerramento + garantia_dias < data atual)
+- Calcular data_fim_garantia
 - Alerta visual para garantias que vencem em até 7 dias
 - Consulta por cliente ou equipamento
 - Exibe quantidade de dias restantes de garantia
 - Permite registrar atendimento em garantia (nova OS vinculada)
+- Verificar garantia ativa
 
 ---
 
-## US14 - Gerenciar Notificações
-
-**Descrição:**
-Permite enviar, consultar e gerenciar notificações relacionadas a alterações de ordens de serviço, pagamentos, garantias e visitas técnicas.
-
-**Requisitos:** RF14.1, RF14.2, RF14.3, RF14.4, RF14.5, RF14.6, RF14.7, RF14.8
-
-**Prioridade:** Importante
-
-**Estimativa:** 5h
-
-**Responsáveis:**
-- Analista: Mariana
-- Desenvolvedor: Mariana
-- Revisor: Jadson
-- Testador: Mariana
-
-**Testes de Aceitação:**
-- Notificação enviada ao cliente quando a OS muda de status
-- Lembrete enviado para contas próximas do vencimento
-- Alerta enviado para garantias próximas do vencimento
-- Notificação enviada quando visita técnica for agendada
-- Usuário consegue visualizar suas notificações
-- Usuário consegue marcar notificação como lida
-- Usuário consegue excluir notificação
-- Administrador consegue reenviar notificações com falha
-
----
 
 # Matriz de Rastreabilidade - Requisitos Funcionais x User Stories
 
 | ID    | Requisito Funcional            | User Stories | Total |
 | ------| -------------------------------| ------------ | ----- |
-| RF00  | Manter Usuário                 | US00         |   1   | 
-| RF01  | Manter Cliente                 | US01         |   1   |
-| RF02  | Manter Funcionário             | US02         |   1   |
+| RF00  | Autenticação                   | US00         |   1   | 
+| RF01  | Manter Funcionário             | US01         |   1   |
+| RF02  | Manter Cliente                 | US02         |   1   |
 | RF03  | Gerenciar Aparelho             | US03         |   1   |
 | RF04  | Gerenciar Ordem_Serviço        | US04         |   1   |
-| RF05  | Manter Serviço                 | US05         |   1   |
-| RF06  | Registrar Serviço_Executado    | US06         |   1   | 
+| RF05  | Gerenciar Serviço              | US05         |   1   |
+| RF06  | Registrar OrdemServicoServico  | US06         |   1   | 
 | RF07  | Gerenciar Equipamento          | US07         |   1   |
-| RF08  | Gerenciar Equipamento_Usado    | US08         |   1   |
-| RF09  | Agendar Visita_Técnica         | US09         |   1   |
-| RF10  | Gerenciar Conta_Receber        | US10         |   1   |
-| RF11  | Gerenciar Pagamento            | US11         |   1   |
-| RF12  | Gerar Relatório                | US12         |   1   |
-| RF13  | Controle de Garantia           | US13         |   1   |
-| RF14  | Gerenciar Notificações         | US14         |   1   |
+| RF08  | Agendar Visita_Técnica         | US08         |   1   |
+| RF09  | Gerenciar Conta_Receber        | US09         |   1   |
+| RF10  | AuditoriaLog                   | US10         |   1   |
+| RF11  | Gerar Relatório                | US11         |   1   |
+| RF12  | Controle de Garantia           | US12         |   1   |
+
 
 ## 📊 Estatísticas
 
-- **Total de Requisitos Funcionais:** 15
-- **Total de User Stories:** 15
+- **Total de Requisitos Funcionais:** 13
+- **Total de User Stories:** 13
 - **Média de US por RF:** 1:1
-- **Total estimado de desenvolvimento:** 97 horas
+- **Total estimado de desenvolvimento:** 87 horas
 
 ## 🔄 Mapeamento US × Perfis de Usuário
 
 | Perfil | User Stories |
-|:---|:---|
-| Cliente |	US03, US04, US10, US11, US14 |
-| Técnico |	US01, US03, US04,  US05, US06, US07, US08, US09, US13, US14 |
-| Administrativo | US00, US01, US02, US03, US04, US05, US06, US07, US08, US09, US10, US11, US12, US13, US14 |
+|:-------|:-------------|
+| Técnico |	US00, US02, US03, US04, US06, US10 |
+| Administrativo | US00, US01, US02, US03, US04, US05, US06, US07, US08, US09, US10, US11, US12 |
 

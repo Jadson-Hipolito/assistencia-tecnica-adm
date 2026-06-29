@@ -1,0 +1,47 @@
+# 🔹 Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 🔹 Ambientes virtuais
+.venv/
+venv/
+env/
+
+# 🔹 Variáveis de ambiente
+.env
+
+# 🔹 Banco de dados local
+data/*.db
+data/*.sqlite3
+
+# 🔹 Logs
+*.log
+
+# 🔹 Sistema operacional
+.DS_Store
+Thumbs.db
+
+# 🔹 VS Code
+.vscode/
+
+# 🔹 Node / React
+node_modules/
+dist/
+
+# 🔹 Cache e builds
+.cache/
+build/
+
+# 🔹 Testes / cobertura
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 🔹 Linters
+.mypy_cache/
+.ruff_cache/
+
+# 🔹 Arquivos temporários
+*.tmp
+*.swp

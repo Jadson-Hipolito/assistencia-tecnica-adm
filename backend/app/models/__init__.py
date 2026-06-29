@@ -1,19 +1,24 @@
-from .usuario import Usuario
-from .cliente import Cliente
 from .funcionario import Funcionario
+from .cliente import Cliente
+from .servico import Servico
+from .equipamento import Equipamento
+from .aparelho import Aparelho
 from .ordem_servico import OrdemServico
-from .servico_executado import ServicoExecutado
-from .equipamento_usado import EquipamentoUsado
+from .ordem_servico_servico import OrdemServicoServico
+from .visita_tecnica import VisitaTecnica
 from .conta_receber import ContaReceber
-from .notificacao import Notificacao
+from .auditoria_log import AuditoriaLog
+
 
 __all__ = [
-    "Usuario",
-    "Cliente",
     "Funcionario",
+    "Cliente",
+    "Servico",
+    "Equipamento",
+    "Aparelho",
     "OrdemServico",
-    "ServicoExecutado",
-    "EquipamentoUsado",
+    "OrdemServicoServico",
+    "VisitaTecnica",
     "ContaReceber",
-    "Notificacao"
+    "AuditoriaLog"
 ]

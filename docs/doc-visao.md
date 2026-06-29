@@ -4,7 +4,13 @@
 
 Título: Sistema de Gestão de Assistência Técnica
 
-Descrição: O Sistema de Gestão de Assistência Técnica é uma aplicação web que tem como objetivo gerenciar clientes, ordens de serviço, equipamentos e visitas técnicas de forma organizada e eficiente. Ele permite cadastrar e acompanhar ordens de serviço e gerar relatórios para facilitar o acompanhamento das atividades. O sistema oferece diferentes perfis de usuários, permitindo que cada um acesse funcionalidades específicas de acordo com suas permissões.
+Descrição: O Sistema de Gestão de Assistência Técnica é uma aplicação web desenvolvida para automatizar e organizar os processos operacionais de uma assistência técnica, incluindo o controle de clientes, aparelhos, ordens de serviço, equipamentos e visitas técnicas.
+
+O sistema centraliza todo o fluxo de atendimento técnico, desde a abertura da ordem de serviço até sua finalização e geração de cobrança, permitindo maior controle sobre prazos, serviços realizados e recursos utilizados.
+
+Além disso, a aplicação possibilita o gerenciamento de estoque de equipamentos, registro de visitas técnicas e geração de relatórios gerenciais e operacionais, contribuindo para a tomada de decisão e melhoria da eficiência dos processos internos.
+
+O sistema é de uso exclusivo de funcionários internos (administradores e técnicos), com controle de acesso baseado em perfis, garantindo segurança e organização das operações.
 
 ---
 
@@ -29,211 +35,193 @@ Mariana   | Python, SQLite, Git/GitHub |
 
 ## Perfis dos Usuários
 
-O sistema poderá ser utilizado por diversos usuários. Temos os seguintes perfis/atores:
+O sistema é utilizado exclusivamente por funcionários internos da assistência técnica. Temos os seguintes perfis/atores:
 
-Perfil                                 | Descrição   |
----------                              | ----------- |
-Cliente | Este usuário pode verificar suas ordens de serviço, consultar contas a receber e realizar pagamentos online de serviços concluídos.
-Administrador | Este usuário é responsável pela gestão do sistema, cadastro de informações, controle financeiro e registro de pagamentos recebidos fora do sistema.
-Técnico | Este usuário é responsável pela execução dos serviços, atualização das ordens de serviço e registro de peças utilizadas.
+Perfil        | Descrição   |
+------------- | ----------- |
+Administrador | Responsável pela gestão completa do sistema, incluindo cadastro de clientes, aparelhos, ordens de serviço, serviços, equipamentos e controle financeiro. Também possui acesso a relatórios e auditoria do sistema.|
+Técnico       | Este usuário é responsável pela execução dos serviços, atualização das ordens de serviço e registro de peças utilizadas.|
 
 ---
 
 ## Lista de Requisitos Funcionais
 
-### Entidade Realizar Login no Sistema - RF00 - Manter Usuario
-Permite que usuários (clientes e funcionários) realizem autenticação no sistema com e-mail e senha, conforme tabela USUARIO.
+### Requisito de Segurança - RF00 - Autenticação
+Responsável por controlar o acesso ao sistema, permitindo que apenas funcionários cadastrados realizem login por meio de credenciais (e-mail e senha). O sistema valida as informações e cria uma sessão autenticada para o usuário, garantindo segurança no acesso às funcionalidades.
 
-Requisito                     | Descrição   | Ator                      |
----------                     | ----------- | ----------                |
-RF00.1 - Realizar Login       | Autenticar usuário com e-mail e senha, gerando sessão ou token de acesso | Cliente, Administrador, Técnico |
-RF00.2 - Recuperar Senha      | Permitir que o usuário recupere sua senha via e-mail | Cliente, Administrador, Técnico |
+Regra: Somente funcionários podem acessar o sistema.
 
-RF00.3 - Logout               | Encerrar a sessão do usuário no sistema | Cliente, Administrador, Técnico |
-
----
-
-### Entidade Cliente - RF01 - Manter Cliente
-Este usuário pode solicitar serviços, acompanhar suas ordens de serviço, consultar contas a receber e realizar pagamentos online de serviços concluídos.
-
-Regra: Um cliente deve ser obrigatoriamente Pessoa Física (CPF) ou Pessoa Jurídica (CNPJ). A especialização CLIENTE → CLIENTE_PF/CLIENTE_PJ é total e disjunta, ou seja, todo cliente deve pertencer a exatamente uma dessas categorias, nunca a ambas.
-
-Requisito                     | Descrição   | Ator |
----------                     | ----------- | ---------- |
-RF01.1 - Cadastrar Cliente   | Insere novo cliente informando: id, nome, endereço, contato, CPF ou CNPJ conforme o tipo do cliente. | Administrador |
-RF01.2 - Alterar Cliente     | Atualiza qualquer dado contido no cadastro do cliente, caso seja necessário. | Administrador |
-RF01.3 - Consultar Cliente   | Consulta do cliente através dos dados do mesmo. | Administrador, Técnico |
-RF01.4 - Desativar Cliente   | Desativar um cliente informando o id. | Administrador |
+| Requisito               | Descrição                | Ator                   |
+| ----------------------- | ------------------------ | ---------------------- |
+| RF00.1 – Realizar Login        | Permite autenticar o funcionário por meio de e-mail e senha. | Administrador, Técnico |
+| RF00.2 – Alterar Senha         | Permite alterar a senha de acesso.              | Administrador, Técnico |
+| RF00.3 – Logout                | Permite encerrar a sessão do usuário.           | Administrador, Técnico |
 
 ---
 
-### Entidade Funcionário - RF02 - Manter Funcionário
-Um funcionário representa o usuário responsável pelas operações do sistema, classificados como: Técnico e Administrador.
+### Entidade Funcionário - RF01 - Manter Funcionário
+Um funcionário representa o usuário interno do sistema, podendo possuir perfil Administrador ou Técnico.
 
-Requisito                     | Descrição   | Ator           |
----------                     | ----------- | ----------     |
-RF02.1 - Cadastrar Funcionário | Insere novo funcionário informando: código, nome, CPF, cargo, salario, carteira, expendiente. | Administrador |
-RF02.2 - Alterar Funcionário | Atualiza um funcionário informando: código, nome, CPF, cargo, salario, carteira, expendiente. | Administrador |
-RF02.3 - Consultar Funcionário |  Consulta do funcionário através dos dados do mesmo. | Administrador |
-RF02.4 - Desativar Funcionário | Desativar um funcionário informando o id. | Administrador |
+
+| Requisito               | Descrição                | Ator                   |
+| ----------------------- | ------------------------ | ---------------------- |
+| RF01.1 – Cadastrar Funcionário | Permite cadastrar um novo funcionário informando nome, e-mail, senha e perfil. | Administrador          |
+| RF01.2 – Alterar Funcionário   | Permite atualizar os dados de um funcionário.   | Administrador          |
+| RF01.3 – Consultar Funcionário | Permite consultar funcionários cadastrados.     | Administrador          |
+| RF01.4 – Desativar Funcionário | Permite a desativação do funcionário do sistema.| Administrador          |
+
+---
+
+### Entidade Cliente - RF02 - Manter Cliente
+Representa os clientes da assistência técnica
+
+Requisito                     | Descrição   | Ator       |
+----------------------------- | ----------- | ---------- |
+RF02.1 - Cadastrar Cliente    | Insere novo cliente informando: id, nome, documento(CPF ou CNPJ conforme o tipo do cliente), contato, endereço. | Administrador |
+RF02.2 - Alterar Cliente      | Atualiza qualquer dado contido no cadastro do cliente, caso seja necessário. | Administrador |
+RF02.3 - Consultar Cliente    | Consulta do cliente através dos dados do mesmo. | Administrador, Técnico |
+RF02.4 - Desativar Cliente    | Desativar um cliente informando o id. | Administrador |
 
 ---
 
 ### Entidade Aparelho - RF03 - Gerenciar Aparelho
 Um aparelho representa um equipamento pertencente ao cliente que será avaliado, reparado ou acompanhado pela assistência técnica.
 
-Requisito | Descrição | Ator
---------- | ----------- | ----------
-RF03.1 - Cadastrar Aparelho | Permite cadastrar aparelho vinculado a um cliente | Administrador
-RF03.2 - Alterar Aparelho | Atualiza dados do aparelho | Administrador
-RF03.3 - Consultar Aparelho | Consulta aparelho por id, tipo, marca, modelo ou número de série | Administrador, Técnico
-RF03.4 - Desativar Aparelho | Desativa aparelho sem OS em andamento | Administrador
+Regra: Todo aparelho deve estar vinculado a um cliente previamente cadastrado.
+
+Requisito                   | Descrição                                         | Ator                    |
+--------------------------- | --------------------------------------------------| ----------------------- |
+RF03.1 - Cadastrar Aparelho | Permite cadastrar aparelho vinculado a um cliente | Administrador           |
+RF03.2 - Alterar Aparelho   | Atualiza dados do aparelho                        | Administrador           |
+RF03.3 - Consultar Aparelho | Consulta aparelho por id                          | Administrador, Técnico  |
+RF03.4 - Desativar Aparelho | Desativa aparelho sem OS em andamento             | Administrador           |
 
 ---
 
 ### Entidade Ordem_Serviço - RF04 - Gerenciar Ordem_Serviço
 Uma ordem de serviço registra o atendimento realizado, podendo conter vários equipamentos e status de acompanhamento.
 
+Regra: Uma Ordem de Serviço somente poderá ser aberta para um cliente e um aparelho cadastrados.
+
 Requisito                     | Descrição   | Ator           |
----------                     | ----------- | ----------     |
-RF04.1 - Abrir ordem de Serviço  | Criar ordem de serviço para solicitação de reparo ou manutenção, incluindo informações do aparelho e descrição do problema e quaisquer detalhes relevantes. | Cliente e Administrador |
+----------------------------- | ----------- | -------------- |
+RF04.1 - Abrir ordem de Serviço  | Criar ordem de serviço para solicitação de reparo ou manutenção, incluindo informações do aparelho e descrição do problema e quaisquer detalhes relevantes. | Administrador |
 RF04.2 - Editar ordem de serviço | Atualiza uma OS informando:informações sobre o cliente, descrição do problema e quaisquer detalhes relevantes. | Administrador |
-RF04.3 - Consultar ordem de serviço | Consulta uma OS informando: id. | Técnico, Administrador, Cliente |
+RF04.3 - Consultar ordem de serviço | Consulta uma OS informando: id. | Técnico, Administrador |
 RF04.4 - Atualizar Status da OS     | Alterar o status da OS conforme andamento. | Técnico, Administrador |
 RF04.5 - Encerrar ordem de serviço   | Encerramento da OS após a conclusão das atividades.  | Técnico |
 
 ---
 
-### Entidade Serviço - RF05 - Manter Serviço
+### Entidade Serviço - RF05 - Gerenciar Serviço
 Representa o catálogo de serviços oferecidos pela assistência técnica.
 
-Requisito | Descrição | Ator
---------- | ----------- | ----------
-RF05.1 - Cadastrar Serviço | Cadastra serviço no catálogo | Administrador
-RF05.2 - Alterar Serviço | Atualiza serviço existente | Administrador
-RF05.3 - Consultar Serviço | Consulta serviços cadastrados | Administrador, Técnico
-RF05.4 - Desativar Serviço | Desativa serviço do catálogo | Administrador
+Regra: Apenas serviços ativos podem ser vinculados a uma Ordem de Serviço.
+
+Requisito                  | Descrição                     | Ator                   |
+-------------------------- | ----------------------------- | ---------------------- |
+RF05.1 - Cadastrar Serviço | Cadastra serviço no catálogo  | Administrador          |
+RF05.2 - Alterar Serviço   | Atualiza serviço existente    | Administrador          |
+RF05.3 - Consultar Serviço | Consulta serviços cadastrados | Administrador, Técnico |
+RF05.4 - Desativar Serviço | Desativa serviço do catálogo  | Administrador          |
 
 ---
 
-### Entidade Serviço_Usado - RF06 - Registrar Serviço_Executado
-Registra a execução de um serviço específico em uma ordem de serviço, com controle de tempo real, técnico responsável e cálculo automático de comissão.
+### Entidade OrdemServicoServico - RF06 - Registrar OrdemServicoServico
+Relaciona os serviços executados em uma ordem de serviço.
 
-| Requisito | Descrição | Ator |
-|-----------|-----------|------|
-| RF06.1 - Registrar Serviço na OS | Associa um serviço do catálogo a uma ordem de serviço, definindo valor_cobrado (pode ser diferente do valor_padrao) e garantia_dias | Administrador, Técnico |
-| RF06.2 - Iniciar Execução | Técnico inicia a execução de um serviço, registrando data_inicio e status_execucao = 'EM_EXECUCAO' | Técnico |
-| RF06.3 - Pausar Execução | Técnico pausa a execução, registrando minutos_pausa acumulado e status_execucao = 'PAUSADO' | Técnico |
-| RF06.4 - Retomar Execução | Técnico retoma a execução pausada, voltando status_execucao para 'EM_EXECUCAO' | Técnico |
-| RF06.5 - Finalizar Execução | Técnico finaliza a execução, registrando data_fim, calculando tempo_gasto e status_execucao = 'CONCLUIDO' | Técnico |
-| RF06.6 - Calcular Comissão | Calcula automaticamente comissão do técnico baseada no valor_cobrado e comissao_percentual do técnico | Sistema |
-| RF06.7 - Calcular Garantia | Sistema calcula data de fim da garantia com base na data_fim + garantia_dias | Sistema |
-| RF06.8 - Verificar Garantia Ativa | Permite verificar se um serviço executado ainda está dentro do período de garantia | Administrador, Técnico |
-| RF06.9 - Consultar Serviços Executados | Permite consultar serviços executados por OS, por técnico, por período ou por status | Administrador, Técnico |
+Regra: Os serviços somente poderão ser registrados após a abertura da Ordem de Serviço, e a Ordem de Serviço somente poderá ser finalizada após a conclusão de todos os serviços registrados.
+
+| Requisito                  | Descrição                                                     | Ator                   |
+| -------------------------- | ------------------------------------------------------------- | ---------------------- |
+| RF06.1 – Adicionar Serviço | Permite adicionar um serviço a uma ordem de serviço.          | Administrador, Técnico |
+| RF06.2 – Remover Serviço   | Permite remover um serviço da ordem de serviço.               | Administrador, Técnico |
+| RF06.3 – Calcular Subtotal | Calcula automaticamente o subtotal de cada serviço executado. | Sistema                |
+
 
 ---
 
 ### Entidade Equipamento  - RF07 - Gerenciar Equipamento 
 Um componente essencial ao realizar OS. Ele tem: código, tipo, marca, modelo, quantidade.
 
-Requisito                     | Descrição   | Ator           |
----------                     | ----------- | ----------     |
-RF07.1 - Cadastrar Equipamento   | Insere novo equipamento informando: código, tipo, marca, modelo, quantidade. | Administrador |
-RF07.2 - Listar Equipamento   | Listagem dos equipamentos cadastrados. | Administrador, Técnico |
-RF07.3 - Consultar Equipamento | Consultar equipamento informando: código, tipo, marca, modelo. | Administrador, Técnico |
-RF07.4 - Desativar Equipamento   | Desativa um equipamento informando seu identificador. | Administrador |
+Regra: A quantidade de equipamentos em estoque não pode assumir valores negativos.
+
+Requisito                      | Descrição                                                        | Ator                   |
+------------------------------ | ---------------------------------------------------------------- | ---------------------- |
+RF07.1 - Cadastrar Equipamento | Insere novo equipamento informando: id, nome, tipo e quantidade. | Administrador          |
+RF07.2 - Alterar Equipamento   | Permite atualizar os dados do equipamento.                       | Administrador, Técnico |
+RF07.3 - Consultar Equipamento | Permite consultar equipamentos cadastrados.                      | Administrador, Técnico |
+RF07.4 - Atualizar Estoque     | Permite controlar a quantidade disponível em estoque.            | Administrador, Técnico |
 
 ---
 
-### Entidade Equipamento Usado - RF08 - Gerenciar Equipamento_Usado
-Controla os equipamentos/peças utilizados em um serviço executado.
 
-Requisito | Descrição | Ator
---------- | ----------- | ----------
-RF08.1 - Registrar Equipamento Utilizado | Vincula equipamento a serviço executado | Técnico
-RF08.2 - Consultar Equipamentos Utilizados | Consulta equipamentos utilizados em uma OS | Técnico, Administrador
-RF08.3 - Atualizar Quantidade Utilizada | Atualiza quantidade utilizada | Técnico
-RF08.4 - Remover Equipamento Utilizado | Remove equipamento associado | Técnico
-
----
-
-### Entidade Visita_Técnica - RF09 - Agendar Visita_Técnica
+### Entidade Visita_Técnica - RF08 - Agendar Visita_Técnica
 Uma visita técnica representa um atendimento presencial vinculado a uma ordem de serviço.
 
-Requisito                     | Descrição   | Ator           |
----------                     | ----------- | ----------     |
-RF09.1 - Agendar Visitas Técnicas  | Funcionalidade que permite ao funcionário administrativo agendar visitas presenciais para resolver problemas que não podem ser resolvidos remotamente.  | Administrador |
-RF09.2 - Registrar Realização da Visita | Funcionalidade que permite ao técnico registrar a data e o resultado da visita.|	Técnico |
+Regra: Toda visita técnica deve estar vinculada a uma Ordem de Serviço e a um funcionário responsável.
+
+| Requisito                 | Descrição                             | Ator          |
+| ------------------------- | ------------------------------------- | ------------- |
+| RF08.1 – Registrar Visita | Permite registrar uma visita técnica. | Administrador |
+| RF08.2 – Reagendar Visita | Permite reagendar uma visita técnica. | Administrador |
+| RF08.3 – Cancelar Visita  | Permite cancelar uma visita técnica.  | Administrador |
 
 ---
 
-### Entidade Conta_Receber - RF10 - Gerenciar Contas_Receber 
-Ao salvar uma OS é criado um conta receber automaticamente, na qual possuir: id,valor, data de pagamento, também permitir a funcionalidade ao cliente selecionar uma conta a pagar e com os detalhes do pagamento, incluindo o valor a ser pago, de forma conveniente e segura.
+### Entidade Conta_Receber - RF9 - Gerenciar Conta_Receber 
+Controla os valores gerados pelas ordens de serviço.
 
-Requisito                     | Descrição   | Ator           |
----------                     | ----------- | ----------     |
-| RF10.1 - Registrar Conta Receber | Ao salvar uma OS é criado um conta receber automaticamente | Sistema |
-| RF10.2 - Registrar Pagamento Offline | Administrador registra pagamentos fora do sistema | Administrador |
-| RF10.3 - Visualizar Contas Pendentes | Cliente visualiza contas PENDENTE ou VENCIDO | Cliente |
-| RF10.4 - Selecionar Conta para Pagamento | Cliente seleciona uma ou múltiplas contas | Cliente |
-| RF10.5 - Realizar Pagamento Online | Integrar com gateway de pagamento | Cliente, Sistema |
-| RF10.6 - Confirmar Pagamento | Atualizar status para PAGO | Sistema |
-| RF10.7 - Emitir Comprovante | Gerar comprovante PDF | Sistema |
-| RF10.8 - Calcular Multa | Aplicar multa 2% + juros 0.33%/dia | Sistema |
+Regra: Ao finalizar uma Ordem de Serviço, o sistema deve gerar automaticamente uma Conta a Receber vinculada à ordem.
 
----
-
-### Entidade Pagamento - RF11 - Gerenciar Pagamento
-Registra cada transação de pagamento realizada, permitindo que uma única conta a receber tenha múltiplos pagamentos (parcelado).
-
-| Requisito | Descrição | Ator |
-|-----------|-----------|------|
-| RF11.1 - Processar Pagamento | Processa pagamento via gateway integrado | Sistema |
-| RF11.2 - Confirmar Pagamento | Confirma transação e atualiza status | Sistema |
-| RF11.3 - Estornar Pagamento | Administrador pode estornar pagamento | Administrador |
-| RF11.4 - Emitir Comprovante | Gera comprovante PDF do pagamento | Sistema |
-| RF11.5 - Validar Transação | Valida transação com gateway | Sistema |
-| RF11.6 - Pagamento Parcelado | Permite múltiplos pagamentos para uma conta | Cliente |
+| Requisito       | Descrição                 | Ator          |
+| --------------- | ------------------------- | ------------- |
+| RF09.1 - Gerar Conta a Receber | Ao finalizar uma Ordem de Serviço, o sistema cria automaticamente uma conta a receber vinculada à OS | Sistema |
+| RF09.2 - Registrar Pagamento Offline | Administrador registra pagamentos realizados fora do sistema   | Administrador |
+| RF09.3 - Confirmar Pagamento | Atualiza status da conta para **PAGO** após validação                  | Sistema       |
+| RF09.4 - Calcular Multa e Juros | Aplica multa de 2% + juros de 0,33% ao dia em caso de atraso        | Sistema       |
+| RF09.5 - Processar Pagamento Online | Processa pagamento via gateway de pagamento integrado           | Sistema       |
+| RF09.6 - Validar Transação | Valida transação retornada pelo gateway de pagamento                     | Sistema       |
+| RF09.7 - Estornar Pagamento | Permite estorno de pagamento realizado (administrador)                  | Administrador |
+| RF09.8 - Emitir Comprovante | Gera comprovante em PDF do pagamento realizado                          | Sistema       |
 
 ---
 
-### Entidade Relatórios - RF12 - Gerar Relatório
-Permite gerar um relatório de ordens de serviço filtrado por período de abertura, status e técnico responsável, com opção de exportação (PDF/CSV).
+### Entidade AuditoriaLog - RF10 - AuditoriaLog
+Registra as operações realizadas pelos funcionários.
 
-| Requisito | Descrição                         | Ator          |
-| --------- | --------------------------------- | ------------- |
-| RF12.1  - Emitir Relatório     | Gerar relatórios diversos, como histórico de serviços realizados, OS por período, faturamento por período, produtividade por técnico/período (total serviços, tempo gasto, comissão) entre outros.  | Técnico, Administrador |
-| RF12.2    | Filtrar por status                | Administrador |
-| RF12.3    | Filtrar por técnico               | Administrador |
-| RF12.4    | Exportar PDF/CSV                  | Administrador |
+Regra: As ações realizadas pelos funcionários no sistema devem ser registradas em log de auditoria para fins de rastreabilidade.
+
+| Requisito                | Descrição                                                        | Ator          |
+| ------------------------ | ---------------------------------------------------------------- | ------------- |
+| RF10.1 – Registrar Ações | Registra automaticamente as ações realizadas pelos funcionários. | Sistema       |
+| RF10.2 – Consultar Logs  | Permite consultar os registros de auditoria.                     | Administrador |
 
 ---
 
-### Entidade Controle de Garantia - RF13 - Controle de Garantia
+### Entidade Relatórios - RF11 - Gerar Relatório
+Permite emitir relatórios para acompanhamento das atividades da assistência técnica.
+
+Regra: Somente funcionários autorizados podem emitir relatórios do sistema.
+
+| Requisito                    | Descrição                                                       | Ator                   |
+| ---------------------------- | --------------------------------------------------------------- | ---------------------- |
+| RF11.1 - Emitir Relatórios   | Gera relatórios diversos, como histórico de serviços realizados, Ordens de Serviço por período, faturamento por período e produtividade por técnico (quantidade de serviços, tempo gasto e comissão) | Técnico, Administrador |
+| RF11.2 - Filtrar por Status  | Permite filtrar relatórios por status das Ordens de Serviço  | Administrador |
+| RF11.3 - Exportar Relatórios | Exporta relatórios nos formatos PDF e CSV  | Administrador |
+
+---
+
+### Entidade Controle de Garantia - RF12 - Controle de Garantia
 Permite consultar e controlar o período de garantia das ordens de serviço finalizadas, com alerta para garantias próximas do vencimento ou já expiradas.
 
-| Requisito | Descrição                         | Ator          |
-| --------- | --------------------------------- | ------------- |
-| RF13.1 | Consultar garantias ativas	| Técnico, Administrador |
-| RF13.2 |	Alertar garantias próximas do vencimento |	Sistema |
-| RF13.3 |	Registrar atendimento em garantia |	Técnico |
+Regra:
 
----
-
-### Entidade Notificações - RF14 - Gerenciar Notificações
-
-Permite enviar, consultar e gerenciar notificações relacionadas a eventos importantes do sistema, como atualização de ordens de serviço, vencimento de contas, garantias e visitas técnicas.
-
-| Requisito | Descrição | Ator |
-|-----------|-----------|------|
-| RF14.1 - Enviar Notificação de OS | Enviar notificação ao cliente quando houver alteração de status da ordem de serviço | Sistema |
-| RF14.2 - Enviar Lembrete de Pagamento | Enviar aviso de contas próximas do vencimento ou vencidas | Sistema |
-| RF14.3 - Enviar Alerta de Garantia | Enviar alerta sobre garantias próximas do vencimento | Sistema |
-| RF14.4 - Enviar Notificação de Visita Técnica | Informar ao cliente sobre agendamento, alteração ou cancelamento de visita técnica | Sistema |
-| RF14.5 - Consultar Notificações | Permitir ao usuário visualizar suas notificações recebidas | Cliente, Técnico, Administrador |
-| RF14.6 - Marcar Notificação como Lida | Permitir ao usuário marcar notificações como lidas | Cliente, Técnico, Administrador |
-| RF14.7 - Excluir Notificação | Permitir ao usuário remover notificações de sua lista pessoal | Cliente, Técnico, Administrador |
-| RF14.8 - Reenviar Notificação | Permitir o reenvio de notificações que apresentaram falha na entrega | Administrador |
+| Requisito               | Descrição                               | Ator                   |
+| ----------------------- | --------------------------------------- | ---------------------- |
+| RF12.1 – Consultar Garantia | Permite consultar serviços ou ordens de serviço ainda dentro do prazo de garantia. | Técnico, Administrador |
+| RF12.2 – Verificar Validade da Garantia | O sistema verifica automaticamente se a OS ainda está dentro do período de garantia com base na data_fim + garantia_dias. | Sistema |
+| RF12.3 – Registrar Atendimento em Garantia | Permite registrar nova visita ou serviço relacionado a garantia. | Técnico |
 
 ---
 
@@ -244,241 +232,116 @@ Abaixo apresentamos o modelo conceitual usando o **Mermaid**.
 ```mermaid
 erDiagram
     %% Entidades Base
-    USUARIO {
-        int id PK
-        string email
-        string senha
-        string status
-    }
-    
-    CLIENTE {        
-        string nome
-        string endereco
-        string contato
-    }
-    
-    CLIENTE_PF {
-        string cpf
-        date data_nascimento
-    }
-    
-    CLIENTE_PJ {
-        string cnpj
-        string razao_social
-        string nome_fantasia
-    }
-    
-    FUNCIONARIO {
-        string nome
-        string cpf
-        string contato
-        float salario
-        date data_admissao
-        string horario_expediente
-        string status_funcionario
-    }
-    
-    TECNICO {
-        string especialidade
-        string certificacoes
-        int nivel_experiencia
-        float comissao_percentual
-    }
-    
-    ADMINISTRADOR {
-        string cargo
-        string setor
-        float bonus_fixo
-    }
+    class Funcionario {
+    int id PK
+    string nome
+    string email
+    string senha
+    string perfil   
+}
+
+class Cliente {
+    int id PK
+    string tipo_pessoa
+    string nome
+    string documento
+    string contato
+    string email
+    string endereco
+}
     
     %% Entidades de Negócio
-    APARELHO {
-        int id PK
-        string tipo
-        string marca
-        string modelo
-        string numero_serie
-        string cor
-        string observacoes
-        int cliente_id FK
-        string status
-    }
-    
-    ORDEM_SERVICO {
-        int id PK
-        date data_abertura
-        date data_encerramento
-        string descricao_problema
-        string status
-        float valor_total
-        int cliente_id FK
-        int tecnico_id FK
-        int aparelho_id FK
-    }
-    
-    SERVICO {
-        int id PK
-        string nome
-        string descricao
-        float valor_padrao
-        int tempo_estimado
-        string status
-    }
-    
-    SERVICO_EXECUTADO {
-        int id PK
-        int garantia_dias
-        float valor_cobrado
-        string observacoes
-        int os_id FK
-        int servico_id FK
-        int tecnico_id FK
-        datetime data_inicio
-        int minutos_pausa
-        datetime data_fim
-        time tempo_gasto
-        date data_fim_garantia
-        string status_execucao
-        float comissao_calculada
-    }
-    
-    EQUIPAMENTO {
-        int id PK
-        string codigo
-        string tipo
-        string marca
-        string modelo
-        int quantidade_estoque
-        string status
-        string numero_serie
-        date data_aquisicao
-        float valor_compra
-    }
-    
-    EQUIPAMENTO_USADO {
-        int id PK
-        float horas_utilizadas
-        string observacoes
-        int quantidade
-        int servico_executado_id FK
-        int equipamento_id FK
-    }
-    
-    VISITA_TECNICA {
-        int id PK
-        datetime data_agendamento
-        datetime data_realizacao
-        string resultado
-        int os_id FK
-        int tecnico_id FK
-        string status
-    }
+    class Aparelho {
+    int id PK
+    string tipo
+    string marca
+    string modelo
+    string numero_serie
+    string status
+    int cliente_id FK
+}
+
+class Ordem_Servico {
+    int id PK
+    string status
+    string descricao
+    date data_abertura
+    date data_fechamento
+    int cliente_id FK
+    int aparelho_id FK
+}
+
+class Servico {
+    int id PK
+    string nome
+    string descricao
+    decimal valor_padrao
+}
+
+class OrdemServicoServico {
+    int ordem_servico_id FK
+    int servico_id FK
+    int quantidade
+    decimal valor_aplicado
+}
+
+class Equipamento {
+    int id PK
+    string nome
+    string tipo
+    int quantidade
+    string status
+}
+
+class VisitaTecnica {
+    int id PK
+    date data
+    string observacao
+    int ordem_servico_id FK
+    int funcionario_id FK
+}
     
     %% Entidades Financeiras
-    CONTA_RECEBER {
+    class ContaReceber {
         int id PK
-        int cliente_id FK
-        float valor_original
-        float multa
-        float juros
-        float valor_total
-        date data_emissao
-        date data_vencimento
-        date data_pagamento
-        string status_pagamento
-        string forma_pagamento
-        string transacao_id
-        string qr_code_pix
-        string boleto_codigo
-        int os_id FK
-    }
-    
-    PAGAMENTO {
-        int id PK
-        float valor_pago
-        datetime data_pagamento
-        string forma_pagamento
-        string transacao_id
-        string status_transacao
-        string comprovante_url
-        int conta_receber_id FK
-    }
+        decimal valor_total
+        decimal valor_multa
+        decimal valor_desconto
+        string status
+        date vencimento
+        int ordem_servico_id FK
+}
     
     %% Entidades de Suporte
-    NOTIFICACAO {
+    class Garantia {
         int id PK
-        int usuario_id FK
-        string tipo
-        string titulo
-        string mensagem
-        datetime data_envio
-        datetime data_leitura
-        string status
-        string link_referencia
-    }
-    
-    AUDITORIA_LOG {
-        int id PK
-        int usuario_id FK
-        string tabela_afetada
-        int registro_id
-        string acao
-        json dados_antigos
-        json dados_novos
-        datetime data_hora
-        string ip_origem
-    }
-    
-    %% Relacionamentos de Herança (Generalização/Especialização)
-    USUARIO ||--|| CLIENTE : "é um"
-    USUARIO ||--|| FUNCIONARIO : "é um"
-    CLIENTE ||--|| CLIENTE_PF : "é um"
-    CLIENTE ||--|| CLIENTE_PJ : "é um"
-    FUNCIONARIO ||--|| TECNICO : "é um"
-    FUNCIONARIO ||--|| ADMINISTRADOR : "é um"    
+        int ordem_servico_id FK
+        date data_inicio
+        date data_fim
+        int prazo_dias
+        string status  
+}
+
+class AuditoriaLog {
+    int id PK
+    string acao
+    string entidade
+    date data_hora
+    int funcionario_id FK
+} 
+        
     %% Relacionamentos de Associação
     CLIENTE ||--o{ APARELHO : "possui"
-    CLIENTE ||--o{ ORDEM_SERVICO : "solicita"
-    CLIENTE ||--o{ CONTA_RECEBER : "possui"       
-    APARELHO ||--o{ ORDEM_SERVICO : "registrado_em"    
-    TECNICO ||--o{ ORDEM_SERVICO : "responsavel_por"
-    TECNICO ||--o{ SERVICO_EXECUTADO : "executa"
-    TECNICO ||--o{ VISITA_TECNICA : "realiza"         
-    ORDEM_SERVICO ||--o{ VISITA_TECNICA : "gera"
+    CLIENTE ||--o{ ORDEM_SERVICO : "solicita"         
+    APARELHO ||--o{ ORDEM_SERVICO : "registrado_em" 
+    SERVICO ||--o{ ORDEMSERVICOSERVICO : "executado_em" 
+    ORDEM_SERVICO ||--o{ ORDEMSERVICOSERVICO : "contem"
     ORDEM_SERVICO ||--|| CONTA_RECEBER : "gera"
-    ORDEM_SERVICO ||--o{ SERVICO_EXECUTADO : "contem"    
-    SERVICO ||--o{ SERVICO_EXECUTADO : "executado_em"    
-    SERVICO_EXECUTADO ||--o{ EQUIPAMENTO_USADO : "utiliza"    
-    EQUIPAMENTO ||--o{ EQUIPAMENTO_USADO : "usado_em"    
-    CONTA_RECEBER ||--o{ PAGAMENTO : "tem"    
-    USUARIO ||--o{ NOTIFICACAO : "recebe"
-    USUARIO ||--o{ AUDITORIA_LOG : "gera"
+    ORDEM_SERVICO ||--|| GARANTIA : "contem"
+    FUNCIONARIO ||--o{ VISITA_TECNICA : "realiza"
+    ORDEM_SERVICO ||--o{ VISITA_TECNICA : "gera"    
+    FUNCIONARIO ||--o{ AUDITORIA_LOG : "gera"
 ```
-
-#### Descrição das Entidades
-
-Entidade                          |	Descrição   |
----------                         | ----------- |
-Usuário	   | Entidade base abstrata para representar informações gerais de acesso ao sistema: id, email, senha, status. Possui o método +autenticar(email, senha), +recuperarSenha(email), +logout(),+alterarSenha(novaSenha),   +alterarEmail(novoEmail) para validação de credenciais. |
-Cliente	   | Entidade que representa um cliente do sistema, estendendo USUARIO. Contém informações cadastrais: nome, endereco, contato. Possui o método +solicitarOrdemServico(), +visualizarMinhasContas(), +visualizarMeusAparelhos(), +visualizarMinhasOS(),+selecionarContasParaPagamento(contasIds), +realizarPagamentoOnline(contasIds, formaPagamento, +obterComprovantePagamento(contaId). |
-Cliente CPF	| Especialização de CLIENTE para pessoa física. Adiciona os atributos cpf e data_nascimento. |
-Cliente CNPJ	| Especialização de CLIENTE para pessoa jurídica. Adiciona os atributos cnpj, razao_social e nome_fantasia. |
-Funcionário	 | Entidade que representa os funcionários da assistência técnica, servindo como superclasse para Técnico e Administrador. Contém dados como nome, cpf, contato, salario, data_admissao, horario_expediente e status. Possui o método +registrarPonto() para controle de jornada. |
-Técnico | Especialização de FUNCIONARIO para técnicos especializados. Adiciona especialidade, certificacoes, nivel_experiencia e comissao_percentual. Possui os métodos +iniciarExecucaoServico(servicoExecutadoId), +pausarExecucaoServico(servicoExecutadoId), +retomarExecucaoServico(servicoExecutadoId), +finalizarExecucaoServico(servicoExecutadoId), +registrarVisita(visitaId, resultado), +atualizarStatusOS(osId, novoStatus) e +calcularComissao() para gestão de serviços e remuneração variável.|
-Administrador | Especialização de FUNCIONARIO para administradores do sistema. Adiciona cargo, setor e bonus_fixo. Possui o método +gerenciarFuncionarios(), +gerenciarClientes(), +gerenciarAparelhos(), +gerenciarServicos(), +gerenciarEquipamentos(), +registrarPagamentoOffline(contaId, formaPagamento), +cancelarConta(contaId), +gerarRelatorioOS(filtros),+agendarVisitaTecnica(osId, dataAgendamento)|
-Aparelho | Entidade que representa os aparelhos dos clientes que serão reparados. Contém informações técnicas: tipo, marca, modelo, numero_serie, cor, observacoes e cliente_id e status. Possui os métodos +getHistoricoOS() para consultar todas as ordens de serviço do aparelho e +atualizarObservacoes() para manutenção do registro. |
-Ordem_Serviço | Entidade central que representa uma ordem de serviço aberta para reparo. Contém id, data_abertura, data_encerramento, descricao_problema, status, valor_total, cliente_id, tecnico_id e aparelho_id. Possui métodos para +calcularValorTotal(), +alterarStatus(novoStatus), +adicionarServico(servicoId, quantidade), +removerServico(servicoExecutadoId), +adicionarEquipamentoUsado(equipamentoId, quantidade) |
-Serviço | Entidade que representa um tipo de serviço oferecido pela assistência (ex: limpeza, troca de tela, reparo de placa). Contém nome, descricao, valor_padrao, tempo_estimado e status. Possui métodos para +aplicarDesconto(percentual) e +calcularTempoTotal(). |
-Serviço_executado | Entidade associativa que registra a execução de um serviço específico em uma ordem de serviço. Contém garantia_dias,valor_cobrado (que pode ser diferente do valor padrão), observacoes, os_id, servico_id, tecnico_id, data_inicio, data_fim, tempo_gasto, status_execucao, comissao_calculada. Possui o método +calcularGarantia(), +calcularTempoGasto(),+calcularComissao() e +verificarGarantiaAtiva() para formalizar a realização do serviço. |
-Equipamento	| Entidade que representa insumos, ferramentas ou peças do estoque da assistência. Contém codigo, tipo, marca, modelo, quantidade_estoque, status, numero_serie, data_aquisicao e valor_compra. Possui métodos para +diminuirEstoque(), +verificarDisponibilidade() e +reporEstoque() para controle de inventário. |
-Equipamento_usado | Entidade associativa que registra quais equipamentos/peças foram consumidos ou utilizados em cada serviço executado. Contém horas_utilizadas, observacoes, servico_executado_id, equipamento_id e quantidade. Possui o método +calcularCustoUso() para apurar o custo dos insumos aplicados. |
-Visita_Técnica | Entidade que representa visitas realizadas por técnicos na residência do cliente. Contém data_agendamento, data_realizacao, resultado, os_id e tecnico_id e status. Possui métodos para +registrarVisita(), +reagendar() e +cancelar() para gestão do atendimento externo. |
-Conta_Receber	| Entidade que representa as obrigações financeiras geradas pelas ordens de serviço. Contém valor_original, multa, juros, valor_total, data_emissao, data_vencimento, data_pagamento, status_pagamento, forma_pagamento, transacao_id, -string qr_code_pix, string boleto_codigo e os_id. Possui métodos para +calcularTotalComJuros(), +marcarComoPago(), +gerarQRCodePix(), +gerarBoleto(), +aplicarMulta() e +validarPagamento() para gestão financeira completa. |
-Pagamento | Representa o ato do pagamento em si (transação, comprovante, processamento). Uma CONTA_RECEBER pode gerar um PAGAMENTO. Contém valor_pago, data_pagamento, forma_pagamento, transacao_id, status_transacao, comprovante_url. Possui métodos para       +processarPagamento(), +confirmarPagamento(), +estornarPagamento(), +emitirComprovante().|
-| Notificaçao | Entidade que representa as notificações enviadas pelo sistema aos usuários sobre eventos importantes. Contém usuario_id (destinatário), tipo (GARANTIA_EXPIRANDO, CONTA_VENCENDO, OS_ATUALIZADA, VISITA_AGENDADA, PAGAMENTO_CONFIRMADO), titulo, mensagem, data_envio, data_leitura, status (ENVIADO, LIDO, FALHOU) e link_referencia. Possui métodos para +enviar() (dispara a notificação) e +marcarComoLida() (registra leitura pelo usuário).|
-| Auditoria_log | Entidade que registra todas as ações dos usuários no sistema para fins de rastreabilidade, conformidade e segurança. Contém usuario_id (quem executou a ação), tabela_afetada (nome da tabela modificada), registro_id (ID do registro afetado), acao (INSERT, UPDATE, DELETE, STATUS_CHANGE), dados_antigos (JSON com estado anterior), dados_novos (JSON com novo estado), data_hora (timestamp da ação) e ip_origem (endereço IP da requisição). Possui métodos para +registrar() (insere o log automaticamente) e +consultarLogs(filtros) (permite consulta filtrada). Os logs são imutáveis e não podem ser alterados ou excluídos.|
-
----
 
 
 ## Lista de Requisitos Não-Funcionais
