@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -76,11 +75,14 @@
 
     <script>
 
-        const API_URL = "http://localhost:8000";
+        const API_URL = "http://localhost:8000/auth";
 
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
             e.preventDefault();
+
+            const mensagem = document.getElementById("mensagem");
+            mensagem.innerText = "";
 
             const email = document.getElementById("email").value;
             const senha = document.getElementById("senha").value;
@@ -106,27 +108,40 @@
 
                 if (response.ok) {
 
-                    localStorage.setItem(
-                        "access_token",
-                        data.access_token
-                    );
+                    // Caso o backend retorne um objeto
+                    if (data.access_token) {
+                        localStorage.setItem("access_token", data.access_token);
+                    }
+                    // Caso retorne apenas uma string (JWT)
+                    else if (typeof data === "string") {
+                        localStorage.setItem("access_token", data);
+                    }
 
-                    alert("Login realizado com sucesso!");
+                    mensagem.style.color = "green";
+                    mensagem.innerText = "Login realizado com sucesso!";
 
-                    // Altere para a página principal do sistema
                     // window.location.href = "dashboard.html";
 
                 } else {
 
-                    document.getElementById("mensagem").innerText =
-                        data.detail || "Email ou senha inválidos.";
+                    mensagem.style.color = "red";
+
+                    if (data.detail) {
+                        mensagem.innerText = typeof data.detail === "string"
+                            ? data.detail
+                            : JSON.stringify(data.detail);
+                    } else {
+                        mensagem.innerText = "Email ou senha inválidos.";
+                    }
 
                 }
 
             } catch (error) {
 
-                document.getElementById("mensagem").innerText =
-                    "Erro ao conectar com o servidor.";
+                console.error(error);
+
+                mensagem.style.color = "red";
+                mensagem.innerText = "Erro ao conectar com o servidor.";
 
             }
 
@@ -136,4 +151,3 @@
 
 </body>
 </html>
-```
