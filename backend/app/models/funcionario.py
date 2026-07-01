@@ -28,3 +28,37 @@ class Funcionario(Base):
         DateTime(timezone=True),
         server_default=func.now()
     )
+
+    def calcular_comissao(self, valor: float) -> float:
+        return float((valor * self.comissao_percentual) / 100)
+
+    def __init__(
+        self,
+        nome: str,
+        email: str,
+        cargo: str,
+        telefone: str,
+        salario: float,
+        cpf: str,
+        senha: str,
+        nivel_experiencia: int = 1,
+        comissao_percentual: float = 0.0,
+        especialidade: str | None = None,
+        ativo: bool = True,
+    ):
+        if nivel_experiencia < 1 or nivel_experiencia > 5:
+            raise ValueError("Nível de experiência deve ser entre 1 e 5")
+        if comissao_percentual < 0 or comissao_percentual > 30:
+            raise ValueError("Comissão deve ser entre 0% e 30%")
+
+        self.nome = nome
+        self.email = email
+        self.cargo = cargo
+        self.telefone = telefone
+        self.salario = salario
+        self.cpf = cpf
+        self.senha = senha
+        self.nivel_experiencia = nivel_experiencia
+        self.comissao_percentual = comissao_percentual
+        self.especialidade = especialidade
+        self.ativo = ativo

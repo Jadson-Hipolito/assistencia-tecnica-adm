@@ -16,6 +16,9 @@ class ContaReceberCreate(ContaReceberBase):
 
 
 class ContaReceberUpdate(BaseModel):
+    ordem_servico_id: Optional[int] = None
+    valor_total: Optional[float] = None
+    data_vencimento: Optional[date] = None
     status: Optional[str] = None
     data_pagamento: Optional[datetime] = None
 

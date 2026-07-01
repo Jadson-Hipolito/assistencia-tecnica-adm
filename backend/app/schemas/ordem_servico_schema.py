@@ -5,10 +5,12 @@ from pydantic import BaseModel, ConfigDict
 
 
 class OrdemServicoBase(BaseModel):
-    descricao: str
-    status: str
+    descricao_problema: str
+    status: str = "ABERTA"
     cliente_id: int
-    aparelho_id: int
+    aparelho_id: Optional[int] = None
+    tecnico_id: Optional[int] = None
+    valor_total: Optional[float] = 0.0
 
 
 class OrdemServicoCreate(OrdemServicoBase):
@@ -16,13 +18,21 @@ class OrdemServicoCreate(OrdemServicoBase):
 
 
 class OrdemServicoUpdate(BaseModel):
-    descricao: Optional[str] = None
+    descricao_problema: Optional[str] = None
     status: Optional[str] = None
+    tecnico_id: Optional[int] = None
+    valor_total: Optional[float] = None
 
 
-class OrdemServicoResponse(OrdemServicoBase):
+class OrdemServicoResponse(BaseModel):
     id: int
+    descricao_problema: str
+    status: str
+    cliente_id: int
+    aparelho_id: Optional[int] = None
+    tecnico_id: Optional[int] = None
+    valor_total: float
     data_abertura: datetime
-    data_fechamento: Optional[datetime] = None
+    data_encerramento: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

@@ -66,15 +66,23 @@ pip install -r backend/requirements.txt
 
 ### 4. Executar o servidor backend
 
+A partir da raiz do projeto:
+
 ```bash
-cd backend
 uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Ou a partir da raiz do projeto:
+A partir da pasta `backend`:
 
 ```bash
-uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
+cd backend
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Ou execute o script de inicialização:
+
+```bash
+./start_server.sh
 ```
 
 ---

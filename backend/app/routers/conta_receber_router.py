@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from backend.app.core.dependencies import get_db
@@ -14,9 +14,12 @@ router = APIRouter(prefix="/contas-receber", tags=["Contas a Receber"])
 # =========================
 # GERAR CONTA A RECEBER
 # =========================
-@router.post("/")
+@router.post("/", status_code=201)
 def gerar(data: ContaReceberCreate, db: Session = Depends(get_db)):
-    return ContaReceberService.gerar(db, data)
+    try:
+        return ContaReceberService(db).gerar_conta(data)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
 # =========================
@@ -24,7 +27,7 @@ def gerar(data: ContaReceberCreate, db: Session = Depends(get_db)):
 # =========================
 @router.get("/")
 def listar(db: Session = Depends(get_db)):
-    return ContaReceberService.listar(db)
+    return ContaReceberService(db).listar()
 
 
 # =========================
@@ -32,12 +35,10 @@ def listar(db: Session = Depends(get_db)):
 # =========================
 @router.get("/{id}")
 def buscar(id: int, db: Session = Depends(get_db)):
-    conta = ContaReceberService.buscar_por_id(db, id)
-
-    if not conta:
-        raise HTTPException(status_code=404, detail="Conta não encontrada")
-
-    return conta
+    try:
+        return ContaReceberService(db).buscar_por_id(id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
 # =========================
@@ -45,7 +46,10 @@ def buscar(id: int, db: Session = Depends(get_db)):
 # =========================
 @router.put("/{id}")
 def atualizar(id: int, data: ContaReceberUpdate, db: Session = Depends(get_db)):
-    return ContaReceberService.atualizar(db, id, data)
+    try:
+        return ContaReceberService(db).atualizar(id, data)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
 # =========================
@@ -53,7 +57,10 @@ def atualizar(id: int, data: ContaReceberUpdate, db: Session = Depends(get_db)):
 # =========================
 @router.patch("/{id}/pagar")
 def pagar(id: int, db: Session = Depends(get_db)):
-    return ContaReceberService.marcar_como_pago(db, id)
+    try:
+        return ContaReceberService(db).marcar_como_pago(id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
 # =========================
@@ -61,4 +68,7 @@ def pagar(id: int, db: Session = Depends(get_db)):
 # =========================
 @router.delete("/{id}")
 def deletar(id: int, db: Session = Depends(get_db)):
-    return ContaReceberService.deletar(db, id)
+    try:
+        return ContaReceberService(db).deletar(id)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc

@@ -8,6 +8,7 @@ from .ordem_servico_servico import OrdemServicoServico
 from .visita_tecnica import VisitaTecnica
 from .conta_receber import ContaReceber
 from .auditoria_log import AuditoriaLog
+from .usuario import Usuario
 
 
 __all__ = [

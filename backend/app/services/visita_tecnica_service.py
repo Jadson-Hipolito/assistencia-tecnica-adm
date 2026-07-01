@@ -19,6 +19,20 @@ class VisitaTecnicaService(BaseService):
         )
         return self._commit_and_refresh(visita)
 
+    def get_by_id(self, visita_id: int) -> VisitaTecnica:
+        return self._get_or_raise(VisitaTecnica, visita_id, "Visita técnica não encontrada")
+
+    def update(self, visita_id: int, data) -> VisitaTecnica:
+        visita = self.get_by_id(visita_id)
+        payload = self._to_dict(data)
+        for field, value in payload.items():
+            if field in {"id", "created_at", "updated_at"} or value is None:
+                continue
+            setattr(visita, field, value)
+        self.db.commit()
+        self.db.refresh(visita)
+        return visita
+
     def registrar_execucao(self, visita_id: int, resultado: str) -> VisitaTecnica:
         visita = self._get_or_raise(VisitaTecnica, visita_id, "Visita técnica não encontrada")
         visita.data_realizacao = datetime.now()
@@ -27,3 +41,6 @@ class VisitaTecnicaService(BaseService):
         self.db.commit()
         self.db.refresh(visita)
         return visita
+
+    def listar_todas(self) -> list[VisitaTecnica]:
+        return self.db.query(VisitaTecnica).all()

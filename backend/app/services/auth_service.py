@@ -34,6 +34,7 @@ class AuthService:
                 senha=hash_password("admin123"),
                 cargo="admin",
                 telefone="00000000000",
+                salario=0,
                 ativo=True,
             )
             db.add(admin)

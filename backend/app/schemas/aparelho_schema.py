@@ -20,6 +20,7 @@ class AparelhoUpdate(BaseModel):
     marca: Optional[str] = None
     modelo: Optional[str] = None
     numero_serie: Optional[str] = None
+    cliente_id: Optional[int] = None
 
 
 class AparelhoResponse(AparelhoBase):

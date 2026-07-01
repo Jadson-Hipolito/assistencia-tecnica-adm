@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from ..config import config
+from backend.app.core.config import config
 
 # Configuração de hash de senha
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
