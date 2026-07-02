@@ -9,145 +9,142 @@
 
 <body>
 
-    <header>
-        <h1>🛠️ Sistema de Gestão de Assistência Técnica</h1>
+<header>
+    <h1>🛠️ Sistema de Gestão de Assistência Técnica</h1>
 
-        <nav>
-            <a href="index.html">Início</a>
-        </nav>
-    </header>
+    <nav>
+        <a href="index.html">Início</a>
+    </nav>
+</header>
 
-    <main>
+<main>
 
-        <section class="hero">
-            <h2>Login</h2>
-            <p>Acesse sua conta para gerenciar o sistema.</p>
-        </section>
+    <section class="hero">
+        <h2>Login</h2>
+        <p>Acesse sua conta para gerenciar o sistema.</p>
+    </section>
 
-        <section class="login-container">
+    <section class="login-container">
 
-            <div class="card login-card">
+        <div class="card login-card">
 
-                <form id="loginForm">
+            <form id="loginForm">
 
-                    <div class="input-group">
-                        <label for="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            placeholder="Digite seu email"
-                            required>
-                    </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Digite seu email"
+                        required>
+                </div>
 
-                    <div class="input-group">
-                        <label for="senha">Senha</label>
-                        <input
-                            type="password"
-                            id="senha"
-                            placeholder="Digite sua senha"
-                            required>
-                    </div>
+                <div class="input-group">
+                    <label for="senha">Senha</label>
+                    <input
+                        type="password"
+                        id="senha"
+                        placeholder="Digite sua senha"
+                        required>
+                </div>
 
-                    <button type="submit">
-                        Entrar
-                    </button>
+                <button type="submit">
+                    Entrar
+                </button>
 
-                    <button
-                        type="button"
-                        class="btn-cadastro"
-                        onclick="window.location.href='cadastro.html'">
-                        Criar Conta
-                    </button>
+                <button
+                    type="button"
+                    class="btn-cadastro"
+                    onclick="window.location.href='cadastro.html'">
+                    Criar Conta
+                </button>
 
-                </form>
+            </form>
 
-                <p id="mensagem"></p>
+            <p id="mensagem"></p>
 
-            </div>
+        </div>
 
-        </section>
+    </section>
 
-    </main>
+</main>
 
-    <footer>
-        <p>© 2026 - Sistema de Gestão de Assistência Técnica</p>
-    </footer>
+<footer>
+    <p>© 2026 - Sistema de Gestão de Assistência Técnica</p>
+</footer>
 
-    <script>
+<script>
 
-        const API_URL = "http://localhost:8000/auth";
+const API_URL = "http://localhost:8000/auth";
 
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+const form = document.getElementById("loginForm");
+const mensagem = document.getElementById("mensagem");
 
-            e.preventDefault();
+form.addEventListener("submit", async (e) => {
 
-            const mensagem = document.getElementById("mensagem");
-            mensagem.innerText = "";
+    e.preventDefault();
 
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("senha").value;
+    mensagem.innerText = "";
+    mensagem.style.color = "red";
 
-            try {
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value;
 
-                const response = await fetch(`${API_URL}/login`, {
+    try {
 
-                    method: "POST",
+        const response = await fetch(`${API_URL}/login`, {
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+            method: "POST",
 
-                    body: JSON.stringify({
-                        email,
-                        senha
-                    })
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-
-                    // Caso o backend retorne um objeto
-                    if (data.access_token) {
-                        localStorage.setItem("access_token", data.access_token);
-                    }
-                    // Caso retorne apenas uma string (JWT)
-                    else if (typeof data === "string") {
-                        localStorage.setItem("access_token", data);
-                    }
-
-                    mensagem.style.color = "green";
-                    mensagem.innerText = "Login realizado com sucesso!";
-
-                    // window.location.href = "dashboard.html";
-
-                } else {
-
-                    mensagem.style.color = "red";
-
-                    if (data.detail) {
-                        mensagem.innerText = typeof data.detail === "string"
-                            ? data.detail
-                            : JSON.stringify(data.detail);
-                    } else {
-                        mensagem.innerText = "Email ou senha inválidos.";
-                    }
-
-                }
-
-            } catch (error) {
-
-                console.error(error);
-
-                mensagem.style.color = "red";
-                mensagem.innerText = "Erro ao conectar com o servidor.";
-
-            }
+            body: JSON.stringify({
+                email,
+                senha
+            })
 
         });
 
-    </script>
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            mensagem.innerText = data.detail || "Email ou senha inválidos.";
+            return;
+
+        }
+
+        // Salva token
+        localStorage.setItem("access_token", data.access_token);
+
+        // Salva tipo do token
+        localStorage.setItem("token_type", data.token_type);
+
+        // Salva usuário
+        localStorage.setItem("usuario", JSON.stringify(data.user));
+
+        mensagem.style.color = "green";
+        mensagem.innerText = "Login realizado com sucesso!";
+
+        setTimeout(() => {
+
+            window.location.href = "dashboard.html";
+
+        }, 1000);
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        mensagem.innerText = "Erro ao conectar com o servidor.";
+
+    }
+
+});
+
+</script>
 
 </body>
 </html>

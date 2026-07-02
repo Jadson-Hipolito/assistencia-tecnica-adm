@@ -1,12 +1,131 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestão de Assistência Técnica</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header>
+
+    <h1>🛠 Sistema de Gestão de Assistência Técnica</h1>
+
+    <nav>
+
+        <a href="index.html">Início</a>
+        <a href="login.html">Entrar</a>
+        <a href="cadastro.html">Cadastrar</a>
+
+    </nav>
+
+</header>
+
+<main>
+
+    <section class="hero">
+
+        <h2>Bem-vindo</h2>
+
+        <p>
+            Sistema web para gerenciamento completo de assistência técnica,
+            permitindo o controle de clientes, equipamentos, ordens de serviço,
+            funcionários, pagamentos e relatórios.
+        </p>
+
+        <div class="botoes">
+
+            <button onclick="window.location.href='login.html'">
+                Entrar no Sistema
+            </button>
+
+            <button class="btn-cadastro"
+                onclick="window.location.href='cadastro.html'">
+                Criar Conta
+            </button>
+
+        </div>
+
+    </section>
+
+    <section class="cards">
+
+        <div class="card">
+
+            <h3>Clientes</h3>
+
+            <p>
+                Cadastro e gerenciamento de clientes.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Ordens de Serviço</h3>
+
+            <p>
+                Controle completo das ordens em andamento.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Equipamentos</h3>
+
+            <p>
+                Registro de aparelhos e equipamentos.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Funcionários</h3>
+
+            <p>
+                Administração da equipe técnica.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Pagamentos</h3>
+
+            <p>
+                Controle financeiro e contas.
+            </p>
+
+        </div>
+
+        <div class="card">
+
+            <h3>Relatórios</h3>
+
+            <p>
+                Visualização de indicadores e desempenho.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <p>
+        © 2026 - Sistema de Gestão de Assistência Técnica
+    </p>
+
+</footer>
+
+</body>
+
 </html>
