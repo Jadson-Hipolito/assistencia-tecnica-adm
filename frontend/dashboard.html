@@ -1,12 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Dashboard</title>
 
-<link rel="stylesheet" href="css/style.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f3f4f6;
+    }
+
+    header {
+        background: #111827;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    header div {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    button {
+        cursor: pointer;
+        border: none;
+    }
+
+    #logout {
+        background: #dc2626;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+
+    #logout:hover {
+        background: #b91c1c;
+    }
+
+    main {
+        padding: 30px;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        color: #111827;
+    }
+
+    /* GRID */
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        color: #111827;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        background: #f9fafb;
+    }
+
+    #usuario {
+        font-size: 14px;
+        color: #e5e7eb;
+    }
+</style>
 
 </head>
 
@@ -14,16 +95,11 @@
 
 <header>
 
-<h1>🛠 Sistema de Gestão de Assistência Técnica</h1>
+<h1>Sistema de Gestão de Assistência Técnica</h1>
 
 <div>
-
-<span id="usuario"></span>
-
-<button id="logout">
-Sair
-</button>
-
+<span id="usuario">Carregando...</span>
+<button id="logout">Sair</button>
 </div>
 
 </header>
@@ -34,23 +110,15 @@ Sair
 
 <div class="dashboard">
 
-<button>Clientes</button>
-
-<button>Funcionários</button>
-
-<button>Ordens de Serviço</button>
-
-<button>Equipamentos</button>
-
-<button>Pagamentos</button>
-
-<button>Serviços</button>
-
-<button>Relatórios</button>
-
-<button>Auditoria</button>
-
-<button>Backup</button>
+<div class="card" onclick="go('clientes.html')">Clientes</div>
+<div class="card" onclick="go('funcionarios.html')">Funcionários</div>
+<div class="card" onclick="go('ordens_servico.html')">Ordens de Serviço</div>
+<div class="card" onclick="go('equipamentos.html')">Equipamentos</div>
+<div class="card" onclick="go('pagamentos.html')">Pagamentos</div>
+<div class="card" onclick="go('servicos.html')">Serviços</div>
+<div class="card" onclick="go('relatorios.html')">Relatórios</div>
+<div class="card" onclick="go('auditoria.html')">Auditoria</div>
+<div class="card" onclick="go('backup.html')">Backup</div>
 
 </div>
 
@@ -61,44 +129,36 @@ Sair
 const token = localStorage.getItem("access_token");
 
 if(!token){
-
-window.location.href="login.html";
-
+    window.location.href="login.html";
 }
 
-fetch("http://localhost:8000/auth/me",{
-
-headers:{
-Authorization:`Bearer ${token}`
+/* NAV */
+function go(page){
+    window.location.href = page;
 }
 
+/* USER */
+fetch("http://localhost:8000/auth/me", {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
 })
-.then(r=>{
-
-if(!r.ok){
-
-localStorage.clear();
-
-window.location.href="login.html";
-
-}
-
-return r.json();
-
+.then(r => {
+    if(!r.ok){
+        localStorage.clear();
+        window.location.href="login.html";
+    }
+    return r.json();
 })
-.then(usuario=>{
-
-document.getElementById("usuario").innerHTML=
-`Bem-vindo, ${usuario.nome}`;
-
+.then(usuario => {
+    document.getElementById("usuario").innerHTML =
+        `Bem-vindo, ${usuario.nome}`;
 });
 
-document.getElementById("logout").onclick=()=>{
-
-localStorage.clear();
-
-window.location.href="login.html";
-
+/* LOGOUT */
+document.getElementById("logout").onclick = () => {
+    localStorage.clear();
+    window.location.href = "login.html";
 };
 
 </script>

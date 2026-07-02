@@ -9,40 +9,66 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f4f4f4;
+            background: #f3f4f6;
         }
 
         header {
-            background: #1f2937;
+            background: #111827;
             color: white;
-            padding: 15px;
+            padding: 16px;
             text-align: center;
+            font-weight: bold;
+        }
+
+        nav {
+            background: #1f2937;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            justify-content: center;
+        }
+
+        nav button {
+            background: #374151;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background: #4b5563;
         }
 
         .container {
-            padding: 20px;
+            padding: 25px;
         }
 
         .form {
             background: white;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
         }
 
         input, select {
-            padding: 8px;
+            padding: 10px;
             margin: 5px;
             width: 220px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
         }
 
         button {
-            padding: 10px 15px;
+            padding: 10px 14px;
             border: none;
+            border-radius: 6px;
             cursor: pointer;
             background: #2563eb;
             color: white;
-            border-radius: 5px;
         }
 
         button:hover {
@@ -53,29 +79,53 @@
             width: 100%;
             border-collapse: collapse;
             background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
         }
 
         th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
             text-align: left;
         }
 
         th {
-            background: #f1f5f9;
+            background: #f9fafb;
         }
 
         .actions button {
             background: #ef4444;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .actions button:hover {
+            background: #dc2626;
+        }
+
+        .title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .refresh {
+            background: #10b981;
+        }
+
+        .refresh:hover {
+            background: #059669;
         }
 
         .status-pago {
-            color: green;
+            color: #10b981;
             font-weight: bold;
         }
 
         .status-pendente {
-            color: red;
+            color: #ef4444;
             font-weight: bold;
         }
     </style>
@@ -84,12 +134,28 @@
 <body>
 
 <header>
-    <h1>Gestão de Pagamentos</h1>
+    Sistema de Gestão de Assistência Técnica
 </header>
+
+<!-- NAVBAR -->
+<nav>
+    <button onclick="go('dashboard.html')">Home</button>
+    <button onclick="go('clientes.html')">Clientes</button>
+    <button onclick="go('funcionarios.html')">Funcionários</button>
+    <button onclick="go('equipamentos.html')">Equipamentos</button>
+    <button onclick="go('ordens_servico.html')">OS</button>
+    <button onclick="go('servicos.html')">Serviços</button>
+    <button onclick="go('pagamentos.html')">Pagamentos</button>
+    <button onclick="go('relatorios.html')">Relatórios</button>
+    <button onclick="go('auditoria.html')">Auditoria</button>
+    <button onclick="go('backup.html')">Backup</button>
+
+    <button onclick="logout()" style="background:#dc2626;">Sair</button>
+</nav>
 
 <div class="container">
 
-    <!-- FORMULÁRIO -->
+    <!-- FORM -->
     <div class="form">
         <h3>Novo Pagamento</h3>
 
@@ -104,8 +170,11 @@
         <button onclick="addPagamento()">Registrar Pagamento</button>
     </div>
 
-    <!-- TABELA -->
-    <h3>Lista de Pagamentos</h3>
+    <!-- LISTA -->
+    <div class="title-bar">
+        <h3>Pagamentos</h3>
+        <button class="refresh" onclick="loadPagamentos()">Atualizar</button>
+    </div>
 
     <table>
         <thead>
@@ -126,7 +195,19 @@
 <script>
 const API = "http://localhost:8000/api/pagamentos";
 
-// LISTAR
+/* NAV */
+function go(page) {
+    window.location.href = page;
+}
+
+/* LOGOUT */
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+/* LISTAR */
 async function loadPagamentos() {
     const res = await fetch(API);
     const data = await res.json();
@@ -154,7 +235,7 @@ async function loadPagamentos() {
     });
 }
 
-// CRIAR
+/* CREATE */
 async function addPagamento() {
     const ordem_servico_id = document.getElementById("ordem_servico_id").value;
     const valor = document.getElementById("valor").value;
@@ -173,16 +254,13 @@ async function addPagamento() {
     loadPagamentos();
 }
 
-// DELETE
+/* DELETE */
 async function deletePagamento(id) {
-    await fetch(`${API}/${id}`, {
-        method: "DELETE"
-    });
-
+    await fetch(`${API}/${id}`, { method: "DELETE" });
     loadPagamentos();
 }
 
-// INIT
+/* INIT */
 loadPagamentos();
 </script>
 

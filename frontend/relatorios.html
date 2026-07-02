@@ -9,96 +9,144 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f4f4f4;
+            background: #f3f4f6;
         }
 
         header {
-            background: #1f2937;
+            background: #111827;
             color: white;
-            padding: 15px;
+            padding: 16px;
             text-align: center;
+            font-weight: bold;
+        }
+
+        nav {
+            background: #1f2937;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            justify-content: center;
+        }
+
+        nav button {
+            background: #374151;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background: #4b5563;
         }
 
         .container {
-            padding: 20px;
+            padding: 25px;
+        }
+
+        .actions {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions button {
+            background: #10b981;
+            padding: 10px 14px;
+        }
+
+        .actions button:hover {
+            background: #059669;
         }
 
         .cards {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
         }
 
         .card {
             background: white;
             padding: 20px;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 200px;
+            border-radius: 10px;
             text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
         }
 
         .card h2 {
             margin: 0;
-            font-size: 28px;
+            font-size: 32px;
+            color: #111827;
         }
 
         .card span {
-            color: #666;
+            color: #6b7280;
         }
 
-        button {
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            background: #2563eb;
-            color: white;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        .actions {
-            margin-bottom: 20px;
-        }
+        .blue { border-top: 4px solid #2563eb; }
+        .green { border-top: 4px solid #10b981; }
+        .yellow { border-top: 4px solid #f59e0b; }
+        .red { border-top: 4px solid #ef4444; }
     </style>
 </head>
 
 <body>
 
 <header>
-    <h1>Relatórios do Sistema</h1>
+    Sistema de Gestão de Assistência Técnica
 </header>
+
+<!-- NAVBAR -->
+<nav>
+    <button onclick="go('dashboard.html')">Home</button>
+    <button onclick="go('clientes.html')">Clientes</button>
+    <button onclick="go('funcionarios.html')">Funcionários</button>
+    <button onclick="go('equipamentos.html')">Equipamentos</button>
+    <button onclick="go('ordens_servico.html')">OS</button>
+    <button onclick="go('servicos.html')">Serviços</button>
+    <button onclick="go('pagamentos.html')">Pagamentos</button>
+    <button onclick="go('relatorios.html')">Relatórios</button>
+    <button onclick="go('auditoria.html')">Auditoria</button>
+    <button onclick="go('backup.html')">Backup</button>
+
+    <button onclick="logout()" style="background:#dc2626;">Sair</button>
+</nav>
 
 <div class="container">
 
-    <!-- BOTÃO -->
+    <!-- AÇÕES -->
     <div class="actions">
-        <button onclick="loadRelatorios()">Atualizar Relatórios</button>
+        <h2>Dashboard de Relatórios</h2>
+        <button onclick="loadRelatorios()">Atualizar Dados</button>
     </div>
 
     <!-- CARDS -->
     <div class="cards">
 
-        <div class="card">
+        <div class="card blue">
             <h2 id="clientes">0</h2>
             <span>Clientes</span>
         </div>
 
-        <div class="card">
+        <div class="card green">
             <h2 id="funcionarios">0</h2>
             <span>Funcionários</span>
         </div>
 
-        <div class="card">
+        <div class="card yellow">
             <h2 id="ordens">0</h2>
             <span>Ordens de Serviço</span>
         </div>
 
-        <div class="card">
+        <div class="card red">
             <h2 id="pagamentos">0</h2>
             <span>Pagamentos</span>
         </div>
@@ -110,6 +158,19 @@
 <script>
 const API = "http://localhost:8000/api/relatorios";
 
+/* NAV */
+function go(page) {
+    window.location.href = page;
+}
+
+/* LOGOUT */
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+/* LOAD */
 async function loadRelatorios() {
     try {
         const res = await fetch(API);
@@ -121,12 +182,11 @@ async function loadRelatorios() {
         document.getElementById("pagamentos").innerText = data.pagamentos || 0;
 
     } catch (err) {
-        console.error("Erro ao carregar relatórios:", err);
         alert("Erro ao carregar relatórios");
     }
 }
 
-// INIT
+/* INIT */
 loadRelatorios();
 </script>
 

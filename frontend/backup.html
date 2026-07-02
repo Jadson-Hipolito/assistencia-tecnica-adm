@@ -9,55 +9,119 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f4f4f4;
+            background: #f3f4f6;
         }
 
         header {
-            background: #1f2937;
+            background: #111827;
             color: white;
-            padding: 15px;
+            padding: 16px;
             text-align: center;
+            font-size: 18px;
+            font-weight: bold;
         }
 
+        /* NAV */
+        nav {
+            background: #1f2937;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            justify-content: center;
+        }
+
+        nav button {
+            background: #374151;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        nav button:hover {
+            background: #4b5563;
+        }
+
+        .logout {
+            background: #dc2626 !important;
+        }
+
+        .logout:hover {
+            background: #b91c1c !important;
+        }
+
+        /* CONTAINER */
         .container {
-            padding: 20px;
+            display: flex;
+            justify-content: center;
+            padding: 30px;
         }
 
+        /* CARD */
         .card {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 600px;
-            margin: auto;
+            width: 100%;
+            max-width: 650px;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
             text-align: center;
         }
 
-        button {
-            padding: 12px 18px;
-            border: none;
-            cursor: pointer;
-            background: #2563eb;
-            color: white;
-            border-radius: 5px;
-            margin: 10px;
+        .card h2 {
+            margin-bottom: 20px;
         }
 
-        button:hover {
+        /* BUTTONS */
+        .btn {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .primary:hover {
             background: #1d4ed8;
         }
 
         .danger {
             background: #ef4444;
+            color: white;
         }
 
         .danger:hover {
             background: #dc2626;
         }
 
+        /* STATUS */
         .status {
             margin-top: 15px;
             font-weight: bold;
-            color: #333;
+            color: #374151;
+        }
+
+        /* LIST */
+        .list {
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .item {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -65,24 +129,36 @@
 <body>
 
 <header>
-    <h1>Backup do Sistema</h1>
+    Sistema de Assistência Técnica
 </header>
+
+<nav>
+    <button onclick="go('dashboard.html')">Home</button>
+    <button onclick="go('clientes.html')">Clientes</button>
+    <button onclick="go('funcionarios.html')">Funcionários</button>
+    <button onclick="go('equipamentos.html')">Equipamentos</button>
+    <button onclick="go('ordens_servico.html')">OS</button>
+    <button onclick="go('servicos.html')">Serviços</button>
+    <button onclick="go('pagamentos.html')">Pagamentos</button>
+    <button onclick="go('relatorios.html')">Relatórios</button>
+    <button onclick="go('auditoria.html')">Auditoria</button>
+    <button onclick="go('backup.html')">Backup</button>
+    <button class="logout" onclick="logout()">Sair</button>
+</nav>
 
 <div class="container">
 
     <div class="card">
 
-        <h3>Gerenciamento de Backup</h3>
+        <h2>Backup do Sistema</h2>
 
-        <button onclick="createBackup()">Criar Backup</button>
-
-        <button onclick="loadBackups()">Listar Backups</button>
-
-        <button class="danger" onclick="clearBackups()">Limpar Backups</button>
+        <button class="btn primary" onclick="createBackup()">Criar Backup</button>
+        <button class="btn primary" onclick="loadBackups()">Listar Backups</button>
+        <button class="btn danger" onclick="clearBackups()">Limpar</button>
 
         <div class="status" id="status"></div>
 
-        <div id="backupList" style="margin-top: 20px; text-align: left;"></div>
+        <div class="list" id="backupList"></div>
 
     </div>
 
@@ -91,49 +167,51 @@
 <script>
 const API = "http://localhost:8000/api/backup";
 
-// CRIAR BACKUP
+/* NAV */
+function go(page) {
+    window.location.href = page;
+}
+
+/* LOGOUT */
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+/* CREATE */
 async function createBackup() {
-    try {
-        const res = await fetch(`${API}/create`, { method: "POST" });
-        const data = await res.json();
-        document.getElementById("status").innerText = data.message || "Backup criado!";
-    } catch (err) {
-        document.getElementById("status").innerText = "Erro ao criar backup";
-    }
+    const res = await fetch(`${API}/create`, { method: "POST" });
+    const data = await res.json();
+    document.getElementById("status").innerText = data.message || "Backup criado!";
 }
 
-// LISTAR BACKUPS
+/* LIST */
 async function loadBackups() {
-    try {
-        const res = await fetch(`${API}/list`);
-        const data = await res.json();
+    const res = await fetch(`${API}/list`);
+    const data = await res.json();
 
-        const list = document.getElementById("backupList");
-        list.innerHTML = "<h4>Backups:</h4>";
+    const list = document.getElementById("backupList");
+    list.innerHTML = "";
 
-        data.forEach(b => {
-            list.innerHTML += `
-                <div style="padding:5px; border-bottom:1px solid #ddd;">
-                    📦 ${b.nome} - ${b.data}
-                </div>
-            `;
-        });
-
-    } catch (err) {
-        document.getElementById("status").innerText = "Erro ao listar backups";
-    }
+    data.forEach(b => {
+        list.innerHTML += `
+            <div class="item">
+                📦 ${b.nome} — ${b.data}
+            </div>
+        `;
+    });
 }
 
-// LIMPAR BACKUPS
+/* CLEAR */
 async function clearBackups() {
-    try {
-        const res = await fetch(`${API}/clear`, { method: "DELETE" });
-        const data = await res.json();
-        document.getElementById("status").innerText = data.message || "Backups removidos!";
-        document.getElementById("backupList").innerHTML = "";
-    } catch (err) {
-        document.getElementById("status").innerText = "Erro ao limpar backups";
-    }
+    const res = await fetch(`${API}/clear`, { method: "DELETE" });
+    const data = await res.json();
+
+    document.getElementById("status").innerText =
+        data.message || "Backups removidos!";
+
+    document.getElementById("backupList").innerHTML = "";
 }
 </script>
 
