@@ -1,18 +1,24 @@
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ContaReceberBase(BaseModel):
-    ordem_servico_id: int
+    ordem_servico_id: int = Field(alias="os_id")
     valor_total: float
     data_vencimento: date
     status: str = "PENDENTE"
 
+    model_config = ConfigDict(populate_by_name=True, extra="ignore")
+
 
 class ContaReceberCreate(ContaReceberBase):
-    pass
+    cliente_id: Optional[int] = None
+    valor_original: Optional[float] = None
+    multa: Optional[float] = None
+    juros: Optional[float] = None
+    data_emissao: Optional[datetime] = None
 
 
 class ContaReceberUpdate(BaseModel):
