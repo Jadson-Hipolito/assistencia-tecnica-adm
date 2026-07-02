@@ -14,8 +14,7 @@
 | US09 |Gerenciar Conta_Receber | Gerencia automaticamente as contas a receber com valor_total da OS, data_emissão atual e data_vencimento calculada e permite registrar pagamentos (offline e online), incluindo marcar conta como paga. | RF09 | Mariana |
 | US10 | AuditoriaLog | Registra as operações realizadas pelos funcionários.| RF10 | Jadson |
 | US11 | Gerar Relatório | Permite gerar um relatórios com opções filtração e de exportação.| RF11 | Mariana |
-| US12 | Controle de Garantia | Permite consultar e controlar o período de garantia das ordens de serviço finalizadas, com alerta para garantias próximas do vencimento ou já expiradas.| RF12| Jadson |
-| 
+| US12 | Controle de Garantia | Permite consultar e controlar o período de garantia das ordens de serviço finalizadas, com alerta para garantias próximas do vencimento ou já expiradas.| RF12| Jadson | 
 ---
 # Documento Lista de User Stories
 
