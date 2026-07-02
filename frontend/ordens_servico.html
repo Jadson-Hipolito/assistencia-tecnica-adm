@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ordens de Serviço - Sistema</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .form {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            width: 220px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .actions button {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Ordens de Serviço</h1>
+</header>
+
+<div class="container">
+
+    <!-- FORMULÁRIO -->
+    <div class="form">
+        <h3>Nova Ordem de Serviço</h3>
+
+        <input type="text" id="descricao" placeholder="Descrição">
+        <input type="number" id="cliente_id" placeholder="ID do Cliente">
+        <input type="number" id="equipamento_id" placeholder="ID do Equipamento">
+
+        <select id="status">
+            <option value="aberta">Aberta</option>
+            <option value="em_andamento">Em andamento</option>
+            <option value="finalizada">Finalizada</option>
+        </select>
+
+        <button onclick="addOS()">Criar OS</button>
+    </div>
+
+    <!-- TABELA -->
+    <h3>Lista de Ordens de Serviço</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descrição</th>
+                <th>Cliente</th>
+                <th>Equipamento</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="osTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+const API = "http://localhost:8000/api/ordem-servico";
+
+// LISTAR
+async function loadOS() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    const table = document.getElementById("osTable");
+    table.innerHTML = "";
+
+    data.forEach(os => {
+        table.innerHTML += `
+            <tr>
+                <td>${os.id}</td>
+                <td>${os.descricao}</td>
+                <td>${os.cliente_id}</td>
+                <td>${os.equipamento_id}</td>
+                <td>${os.status}</td>
+                <td class="actions">
+                    <button onclick="deleteOS(${os.id})">Excluir</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// CRIAR
+async function addOS() {
+    const descricao = document.getElementById("descricao").value;
+    const cliente_id = document.getElementById("cliente_id").value;
+    const equipamento_id = document.getElementById("equipamento_id").value;
+    const status = document.getElementById("status").value;
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            descricao,
+            cliente_id: Number(cliente_id),
+            equipamento_id: Number(equipamento_id),
+            status
+        })
+    });
+
+    loadOS();
+}
+
+// DELETE
+async function deleteOS(id) {
+    await fetch(`${API}/${id}`, {
+        method: "DELETE"
+    });
+
+    loadOS();
+}
+
+// INIT
+loadOS();
+</script>
+
+</body>
+</html>

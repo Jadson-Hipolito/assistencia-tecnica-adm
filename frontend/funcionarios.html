@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Funcionários - Sistema de Assistência Técnica</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .form {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 200px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .actions button {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Gestão de Funcionários</h1>
+</header>
+
+<div class="container">
+
+    <!-- FORMULÁRIO -->
+    <div class="form">
+        <h3>Novo Funcionário</h3>
+
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="email" id="email" placeholder="Email">
+        <input type="text" id="cargo" placeholder="Cargo">
+
+        <button onclick="addFuncionario()">Adicionar</button>
+    </div>
+
+    <!-- TABELA -->
+    <h3>Lista de Funcionários</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="funcionariosTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+const API = "http://localhost:8000/api/funcionarios";
+
+// LISTAR
+async function loadFuncionarios() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    const table = document.getElementById("funcionariosTable");
+    table.innerHTML = "";
+
+    data.forEach(f => {
+        table.innerHTML += `
+            <tr>
+                <td>${f.id}</td>
+                <td>${f.nome}</td>
+                <td>${f.email || ''}</td>
+                <td>${f.cargo || ''}</td>
+                <td class="actions">
+                    <button onclick="deleteFuncionario(${f.id})">Excluir</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// CRIAR
+async function addFuncionario() {
+    const nome = document.getElementById("nome").value;
+    const email = document.getElementById("email").value;
+    const cargo = document.getElementById("cargo").value;
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, email, cargo })
+    });
+
+    loadFuncionarios();
+}
+
+// DELETE
+async function deleteFuncionario(id) {
+    await fetch(`${API}/${id}`, {
+        method: "DELETE"
+    });
+
+    loadFuncionarios();
+}
+
+// INIT
+loadFuncionarios();
+</script>
+
+</body>
+</html>

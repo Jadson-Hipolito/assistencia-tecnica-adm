@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamentos - Sistema</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .form {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            width: 220px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .actions button {
+            background: #ef4444;
+        }
+
+        .status-pago {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-pendente {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Gestão de Pagamentos</h1>
+</header>
+
+<div class="container">
+
+    <!-- FORMULÁRIO -->
+    <div class="form">
+        <h3>Novo Pagamento</h3>
+
+        <input type="number" id="ordem_servico_id" placeholder="ID da OS">
+        <input type="number" id="valor" placeholder="Valor">
+
+        <select id="status">
+            <option value="pendente">Pendente</option>
+            <option value="pago">Pago</option>
+        </select>
+
+        <button onclick="addPagamento()">Registrar Pagamento</button>
+    </div>
+
+    <!-- TABELA -->
+    <h3>Lista de Pagamentos</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>OS</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="pagamentosTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+const API = "http://localhost:8000/api/pagamentos";
+
+// LISTAR
+async function loadPagamentos() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    const table = document.getElementById("pagamentosTable");
+    table.innerHTML = "";
+
+    data.forEach(p => {
+
+        const statusClass = p.status === "pago"
+            ? "status-pago"
+            : "status-pendente";
+
+        table.innerHTML += `
+            <tr>
+                <td>${p.id}</td>
+                <td>${p.ordem_servico_id}</td>
+                <td>R$ ${p.valor}</td>
+                <td class="${statusClass}">${p.status}</td>
+                <td class="actions">
+                    <button onclick="deletePagamento(${p.id})">Excluir</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// CRIAR
+async function addPagamento() {
+    const ordem_servico_id = document.getElementById("ordem_servico_id").value;
+    const valor = document.getElementById("valor").value;
+    const status = document.getElementById("status").value;
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            ordem_servico_id: Number(ordem_servico_id),
+            valor: Number(valor),
+            status
+        })
+    });
+
+    loadPagamentos();
+}
+
+// DELETE
+async function deletePagamento(id) {
+    await fetch(`${API}/${id}`, {
+        method: "DELETE"
+    });
+
+    loadPagamentos();
+}
+
+// INIT
+loadPagamentos();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Relatórios - Sistema</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .card span {
+            color: #666;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .actions {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Relatórios do Sistema</h1>
+</header>
+
+<div class="container">
+
+    <!-- BOTÃO -->
+    <div class="actions">
+        <button onclick="loadRelatorios()">Atualizar Relatórios</button>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+
+        <div class="card">
+            <h2 id="clientes">0</h2>
+            <span>Clientes</span>
+        </div>
+
+        <div class="card">
+            <h2 id="funcionarios">0</h2>
+            <span>Funcionários</span>
+        </div>
+
+        <div class="card">
+            <h2 id="ordens">0</h2>
+            <span>Ordens de Serviço</span>
+        </div>
+
+        <div class="card">
+            <h2 id="pagamentos">0</h2>
+            <span>Pagamentos</span>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const API = "http://localhost:8000/api/relatorios";
+
+async function loadRelatorios() {
+    try {
+        const res = await fetch(API);
+        const data = await res.json();
+
+        document.getElementById("clientes").innerText = data.clientes || 0;
+        document.getElementById("funcionarios").innerText = data.funcionarios || 0;
+        document.getElementById("ordens").innerText = data.ordens_servico || 0;
+        document.getElementById("pagamentos").innerText = data.pagamentos || 0;
+
+    } catch (err) {
+        console.error("Erro ao carregar relatórios:", err);
+        alert("Erro ao carregar relatórios");
+    }
+}
+
+// INIT
+loadRelatorios();
+</script>
+
+</body>
+</html>
