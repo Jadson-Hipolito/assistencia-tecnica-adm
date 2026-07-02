@@ -87,6 +87,17 @@ Ou execute o script de inicialização:
 
 ---
 
+## 🔐 Credenciais Padrão
+
+Para acessar o sistema com a conta de administrador:
+
+| Campo | Valor |
+|-------|-------|
+| **Email** | `admin@assistencia.com` |
+| **Senha** | `admin123` |
+
+---
+
 ## 🧪 Testes
 
 ### Backend

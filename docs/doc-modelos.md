@@ -196,9 +196,9 @@ Entidade |	Descrição   |
 ## Diagrama Entidade-Relacionamento
 
 ```mermaid
-erDiagram 
-
-class Funcionario {
+erDiagram
+    %% Entidades Base
+Funcionario {
     int id PK
     string nome
     string email
@@ -206,7 +206,7 @@ class Funcionario {
     string perfil   
 }
 
-class Cliente {
+Cliente {
     int id PK
     string tipo_pessoa
     string nome
@@ -215,8 +215,9 @@ class Cliente {
     string email
     string endereco
 }
-
-class Aparelho {
+    
+    %% Entidades de Negócio
+Aparelho {
     int id PK
     string tipo
     string marca
@@ -226,7 +227,7 @@ class Aparelho {
     int cliente_id FK
 }
 
-class Ordem_Servico {
+Ordem_Servico {
     int id PK
     string status
     string descricao
@@ -236,21 +237,21 @@ class Ordem_Servico {
     int aparelho_id FK
 }
 
-class Servico {
+Servico {
     int id PK
     string nome
     string descricao
     decimal valor_padrao
 }
 
-class OrdemServicoServico {
+OrdemServicoServico {
     int ordem_servico_id FK
     int servico_id FK
     int quantidade
     decimal valor_aplicado
 }
 
-class Equipamento {
+Equipamento {
     int id PK
     string nome
     string tipo
@@ -258,15 +259,16 @@ class Equipamento {
     string status
 }
 
-class VisitaTecnica {
+VisitaTecnica {
     int id PK
     date data
     string observacao
     int ordem_servico_id FK
     int funcionario_id FK
 }
-
-class ContaReceber {
+    
+%% Entidades Financeiras
+ContaReceber {
     int id PK
     decimal valor_total
     decimal valor_multa
@@ -275,17 +277,18 @@ class ContaReceber {
     date vencimento
     int ordem_servico_id FK
 }
-
-class Garantia {
-  int id PK
-  int ordem_servico_id FK
-  date data_inicio
-  date data_fim
-  int prazo_dias
-  string status  
+    
+%% Entidades de Suporte
+Garantia {
+    int id PK
+    int ordem_servico_id FK
+    date data_inicio
+    date data_fim
+    int prazo_dias
+    string status  
 }
 
-class AuditoriaLog {
+AuditoriaLog {
     int id PK
     string acao
     string entidade
