@@ -30,6 +30,17 @@ O Sistema de Assistência Técnica facilita o gerenciamento de clientes, equipam
 
 ---
 
+## 🔐 Credenciais Padrão
+
+Para acessar o sistema com a conta de administrador:
+
+| Campo | Valor |
+|-------|-------|
+| **Email** | `admin@assistencia.com` |
+| **Senha** | `admin123` |
+
+---
+
 ## 📂 Estrutura do Projeto
 
 * `backend/` → API FastAPI e lógica do servidor
