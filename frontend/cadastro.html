@@ -1,88 +1,166 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Sistema de Gestão de Assistência Técnica</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Cadastro - Sistema de Gestão</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f3f4f6;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 16px;
+            text-align: center;
+        }
+
+        nav {
+            background: #1f2937;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            background: #374151;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            background: #4b5563;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 75vh;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 13px;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .primary:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .secondary:hover {
+            background: #4b5563;
+        }
+
+        #mensagem {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
 
 <header>
-    <h1>🛠️ Sistema de Gestão de Assistência Técnica</h1>
-
-    <nav>
-        <a href="index.html">Início</a>
-        <a href="login.html">Login</a>
-    </nav>
+    Sistema de Gestão de Assistência Técnica
 </header>
+
+<nav>
+    <a href="index.html">Início</a>
+    <a href="login.html">Login</a>
+</nav>
 
 <main>
 
-    <section class="hero">
+    <div class="card">
+
         <h2>Criar Conta</h2>
-        <p>Cadastre-se para utilizar o sistema.</p>
-    </section>
+        <p style="color:#6b7280;">Cadastre-se para acessar o sistema</p>
 
-    <section class="login-container">
+        <form id="cadastroForm">
 
-        <div class="card login-card">
+            <div class="input-group">
+                <label>Nome</label>
+                <input type="text" id="nome" required>
+            </div>
 
-            <form id="cadastroForm">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
 
-                <div class="input-group">
-                    <label for="nome">Nome</label>
-                    <input
-                        type="text"
-                        id="nome"
-                        placeholder="Digite seu nome"
-                        required>
-                </div>
+            <div class="input-group">
+                <label>Senha</label>
+                <input type="password" id="senha" required>
+            </div>
 
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        placeholder="Digite seu email"
-                        required>
-                </div>
+            <button class="primary" type="submit">Cadastrar</button>
 
-                <div class="input-group">
-                    <label for="senha">Senha</label>
-                    <input
-                        type="password"
-                        id="senha"
-                        placeholder="Digite sua senha"
-                        required>
-                </div>
+            <button class="secondary" type="button"
+                onclick="window.location.href='login.html'">
+                Voltar ao Login
+            </button>
 
-                <button type="submit">
-                    Cadastrar
-                </button>
+        </form>
 
-                <button
-                    type="button"
-                    class="btn-cadastro"
-                    onclick="window.location.href='login.html'">
-                    Voltar ao Login
-                </button>
+        <p id="mensagem"></p>
 
-            </form>
-
-            <p id="mensagem"></p>
-
-        </div>
-
-    </section>
+    </div>
 
 </main>
-
-<footer>
-    <p>© 2026 - Sistema de Gestão de Assistência Técnica</p>
-</footer>
 
 <script>
 
@@ -96,52 +174,36 @@ document.getElementById("cadastroForm").addEventListener("submit", async (e) => 
     const email = document.getElementById("email").value;
     const senha = document.getElementById("senha").value;
 
-    try{
+    const msg = document.getElementById("mensagem");
 
-        const response = await fetch(`${API_URL}/usuarios/`,{
+    try {
 
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
+        const response = await fetch(`${API_URL}/usuarios/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
             },
-
-            body:JSON.stringify({
-                nome:nome,
-                email:email,
-                senha:senha
-            })
-
+            body: JSON.stringify({ nome, email, senha })
         });
 
         const data = await response.json();
 
-        if(response.ok){
-
-            document.getElementById("mensagem").style.color = "green";
-            document.getElementById("mensagem").innerText =
-                "Cadastro realizado com sucesso!";
+        if (response.ok) {
+            msg.style.color = "green";
+            msg.innerText = "Cadastro realizado com sucesso!";
 
             setTimeout(() => {
                 window.location.href = "login.html";
-            },1500);
+            }, 1200);
 
-        }
-        else{
-
-            document.getElementById("mensagem").style.color = "red";
-            document.getElementById("mensagem").innerText =
-                data.detail || "Erro ao cadastrar usuário.";
-
+        } else {
+            msg.style.color = "red";
+            msg.innerText = data.detail || "Erro ao cadastrar usuário.";
         }
 
-    }
-    catch(error){
-
-        document.getElementById("mensagem").style.color = "red";
-        document.getElementById("mensagem").innerText =
-            "Erro ao conectar com o servidor.";
-
+    } catch (error) {
+        msg.style.color = "red";
+        msg.innerText = "Erro ao conectar com o servidor.";
     }
 
 });
@@ -150,4 +212,3 @@ document.getElementById("cadastroForm").addEventListener("submit", async (e) => 
 
 </body>
 </html>
-```

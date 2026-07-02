@@ -1,19 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from backend.app.core.database import Base, engine
-from backend.app.models import (
-    funcionario,
-    cliente,
-    servico,
-    equipamento,
-    aparelho,
-    ordem_servico,
-    ordem_servico_servico,
-    visita_tecnica,
-    conta_receber,
-    auditoria_log,
-)
 from backend.app.routers.auth_router import router as auth_router
 from backend.app.routers.funcionario_router import router as funcionario_router
 from backend.app.routers.cliente_router import router as cliente_router
@@ -40,6 +29,7 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
     )
 
+    # CORS
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -48,6 +38,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # ROTAS DA API
     app.include_router(auth_router)
     app.include_router(funcionario_router)
     app.include_router(cliente_router)
@@ -64,13 +55,8 @@ def create_app() -> FastAPI:
     app.include_router(relatorio_router)
     app.include_router(api_router)
 
-    @app.get("/")
-    def root():
-        return {"message": "Bem-vindo ao Sistema de Gestão de Assistência Técnica"}
-
-    @app.get("/health")
-    def health():
-        return {"status": "ok", "message": "API está funcionando!"}
+    # FRONTEND (index.html)
+    app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
     return app
 

@@ -1,12 +1,78 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de Gestão de Assistência Técnica.">
+
     <title>Sistema de Gestão de Assistência Técnica</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+
+        <h1>Sistema de Gestão de Assistência Técnica</h1>
+
+        <nav>
+            <a href="index.html">Início</a>
+            <a href="login.html">Entrar</a>
+            <a href="cadastro.html">Criar Conta</a>
+        </nav>
+
+    </header>
+
+    <main>
+
+        <section class="hero">
+
+            <h2>Bem-vindo</h2>
+
+            <p>
+                Bem-vindo ao Sistema de Gestão de Assistência Técnica.
+                Esta plataforma foi desenvolvida para auxiliar empresas no gerenciamento
+                de seus processos administrativos e operacionais, oferecendo uma solução
+                moderna, segura e intuitiva.
+            </p>
+
+            <div class="botoes">
+
+                <button onclick="window.location.href='login.html'">
+                    Entrar
+                </button>
+
+                <button class="btn-cadastro"
+                        onclick="window.location.href='cadastro.html'">
+                    Criar Conta
+                </button>
+
+            </div>
+
+        </section>
+
+        <section class="sobre">
+
+            <h2>Sobre o Sistema</h2>
+
+            <p>
+                O objetivo deste sistema é centralizar as informações e facilitar
+                o gerenciamento das atividades de uma assistência técnica,
+                proporcionando maior organização, agilidade e segurança no tratamento
+                dos dados.
+            </p>
+
+            <p>
+                O acesso às funcionalidades é restrito a usuários autenticados.
+                Para utilizar o sistema, realize o login com uma conta cadastrada.
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+
 </html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Serviços - Sistema</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        header nav a {
+            color: white;
+            margin: 0 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        header nav a:hover {
+            text-decoration: underline;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .form {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 220px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .actions button {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Serviços</h1>
+
+    <nav>
+        <a href="dashboard.html">Início</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="funcionarios.html">Funcionários</a>
+        <a href="ordens_servico.html">Ordens</a>
+        <a href="equipamentos.html">Equipamentos</a>
+        <a href="pagamentos.html">Pagamentos</a>
+        <a href="servicos.html">Serviços</a>
+        <a href="relatorios.html">Relatórios</a>
+        <a href="auditoria.html">Auditoria</a>
+        <a href="backup.html">Backup</a>
+    </nav>
+
+    <div class="user-area">
+        <span id="usuario"></span>
+        <button onclick="logout()">Sair</button>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- FORMULÁRIO -->
+    <div class="form">
+        <h3>Novo Serviço</h3>
+
+        <input type="text" id="nome" placeholder="Nome do serviço">
+        <input type="text" id="descricao" placeholder="Descrição">
+        <input type="number" id="preco" placeholder="Preço">
+
+        <button onclick="addServico()">Adicionar</button>
+    </div>
+
+    <!-- TABELA -->
+    <h3>Lista de Serviços</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Preço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody id="servicosTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+const API = "http://localhost:8000/api/servicos";
+
+/* =====================
+   AUTH
+===================== */
+
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+
+function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+}
+
+/* =====================
+   USUÁRIO
+===================== */
+
+fetch("http://localhost:8000/auth/me", {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+})
+.then(r => r.json())
+.then(u => {
+    document.getElementById("usuario").innerText = `Bem-vindo, ${u.nome}`;
+});
+
+/* =====================
+   LISTAR
+===================== */
+
+async function loadServicos() {
+    const res = await fetch(API);
+    const data = await res.json();
+
+    const table = document.getElementById("servicosTable");
+    table.innerHTML = "";
+
+    data.forEach(s => {
+        table.innerHTML += `
+            <tr>
+                <td>${s.id}</td>
+                <td>${s.nome}</td>
+                <td>${s.descricao || ''}</td>
+                <td>R$ ${s.preco}</td>
+                <td class="actions">
+                    <button onclick="deleteServico(${s.id})">Excluir</button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+/* =====================
+   CRIAR
+===================== */
+
+async function addServico() {
+    const nome = document.getElementById("nome").value;
+    const descricao = document.getElementById("descricao").value;
+    const preco = document.getElementById("preco").value;
+
+    await fetch(API, {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            nome,
+            descricao,
+            preco: Number(preco)
+        })
+    });
+
+    loadServicos();
+}
+
+/* =====================
+   DELETE
+===================== */
+
+async function deleteServico(id) {
+    await fetch(`${API}/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    loadServicos();
+}
+
+/* INIT */
+loadServicos();
+</script>
+
+</body>
+</html>
