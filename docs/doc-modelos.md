@@ -5,171 +5,143 @@
 ```mermaid
 classDiagram
 
-%% ======================
-%% ENTIDADES DE DOMÍNIO
-%% ======================
-
 class Funcionario {
-  -int id
-  -string nome
-  -string email
-  -string senha
-  -string perfil 
-  +login(email, senha)
-  +logout()
-  +alterarSenha(novaSenha)
-  +listarFuncionarios()
+    -int id
+    -string nome
+    -string email
+    -string senha
+    -string perfil
+    +login()
+    +logout()
+    +alterarSenha()
+    +listarFuncionarios()
 }
 
 class Cliente {
-  -int id
-  -string tipo_pessoa
-  -string nome
-  -string documento
-  -string contato
-  -string email
-  -string endereco
-  +listarClientes()
+    -int id
+    -string tipoPessoa
+    -string nome
+    -string documento
+    -string contato
+    -string email
+    -string endereco
+    +listaraClientes()
 }
 
 class Aparelho {
-  -int id
-  -string tipo
-  -string marca
-  -string modelo
-  -string numero_serie
-  -string status
-  -int cliente_id
+    -int id
+    -string tipo
+    -string marca
+    -string modelo
+    -string numeroSerie
+    -string status
+    -int cliente_id
 }
 
 class OrdemServico {
-  -int id
-  -string status
-  -string descricao
-  -date data_abertura
-  -date data_fechamento
-  -int cliente_id
-  -int aparelho_id
-  +abrir()
-  +alterarStatus(status)
-  +finalizar()
-  +adicionarServico(servico)
-  +removerServico(servico)
+    -int id
+    -string status
+    -string descricao
+    -date dataAbertura
+    -date dataFechamento
+    -int cliente_id
+    -int aparelho_id
+    +abrir()
+    +alterarStatus(status)
+    +finalizar()
+    +adicionarServico(servico)
+    +removerServico(servico)
 }
 
 class Servico {
-  -int id
-  -string nome
-  -string descricao
-  -decimal valor_padrao
-  +calcularValor()
-  +aplicarDesconto(percentual)
+    -int id
+    -string nome
+    -string descricao
+    -decimal valorPadrao
+    +calcularValor()
+    +aplicarDesconto(percentual)
 }
 
 class OrdemServicoServico {
-  -int ordem_servico_id
-  -int servico_id
-  -int quantidade
-  -decimal valor_aplicado
-  +calcularSubtotal()
+    -int ordem_servico_id
+    -int servico_id
+    -int quantidade
+    -decimal valorAplicado
+    +calcularSubtotal()
 }
 
 class Equipamento {
-  -int id
-  -string nome
-  -string tipo
-  -int quantidade
-  -string status
-  +baixarEstoque(qtd)
-  +reporEstoque(qtd)
-  +verificarDisponibilidade()
+    -int id
+    -string nome    
+    -string tipo
+    -int quantidade
+    -string status
+    +baixarEstoque(qtd)
+    +reporEstoque(qtd)
+    +verificarDisponibilidade()
 }
 
 class VisitaTecnica {
-  -int id
-  -date data
-  -string observacao
-  -int ordem_servico_id
-  -int funcionario_id
-  +registrar()
-  +reagendar(data)
-  +cancelar()
+    -int id
+    -date data
+    -string observacao
+    -int ordem_servico_id
+    -int funcionario_id
+    +registrar()
+    +reagendar(data)
+    +cancelar()
 }
 
 class ContaReceber {
-  -int id
-  -decimal valor_total
-  -decimal valor_multa
-  -decimal valor_desconto
-  -string status
-  -date vencimento
-  -int ordem_servico_id
-  +gerar()
-  +marcarComoPago()
-  +calcularTotal()
+    -int id
+    -decimal valorTotal
+    -decimal valorMulta
+    -decimal valorDesconto
+    -string status
+    -date vencimento
+    -int ordem_servico_id
+    +gerar()
+    +marcarComoPago()
+    +calcularTotal()
 }
 
 class Garantia {
-  -int id
-  -int ordem_servico_id
-  -date data_inicio
-  -date data_fim
-  -int prazo_dias  
-  -string status
-  +ativar()
-  +verificarValidade()
+    -int id
+    -int ordem_servico_id
+    -date dataInicio
+    -date dataFim
+    -int prazoDias
+    -string status
+    +ativar()
+    +verificarValidade()
 }
 
 class AuditoriaLog {
-  -int id
-  -string acao
-  -string entidade
-  -date data_hora
-  -int funcionario_id
+    -int id
+    -string acao
+    -string entidade
+    -datetime dataHora
+    -int funcionario_id
 }
 
-%% ======================
-%% SERVIÇOS (APLICAÇÃO)
-%% ======================
+Cliente "1" --> "*" Aparelho : possui
+Cliente "1" --> "*" OrdemServico : solicita
 
-class RelatorioService {  
-  +relatorioOrdemServico()
-  +relatorioCliente(id)
-  +relatorioTecnico(id)
-  +relatorioEquipamentos()
-  +relatorioFinanceiro()
-  +exportarPDF()
-}
+Aparelho "1" --> "*" OrdemServico : registrado_em
 
-class AuditoriaService {
-  +registrarAcao(funcionario, acao, entidade)
-}
+OrdemServico "1" --> "*" OrdemServicoServico : contém
+Servico "1" --> "*" OrdemServicoServico : executado_em
 
-class OrdemServicoService {
-  +abrirOS(cliente, aparelho)
-  +alterarStatus(osId, status)
-  +finalizarOS(osId)
-  +calcularTotalOS(osId)
-}
+OrdemServico "1" --> "1" ContaReceber : gera
+OrdemServico "1" --> "1" Garantia : possui
 
-%% ======================
-%% RELACIONAMENTOS 
-%% ======================
+Funcionario "1" --> "*" VisitaTecnica : realiza
+OrdemServico "1" --> "*" VisitaTecnica : gera
 
-Cliente "1" -- "0..*" Aparelho
-Cliente "1" -- "0..*" OrdemServico
-Aparelho "1" -- "0..*" OrdemServico
+VisitaTecnica "1" --> "*" Equipamento : utiliza
+OrdemServicoServico "1" --> "*" Equipamento : consome
 
-Servico "1" -- "0..*" OrdemServicoServico
-
-OrdemServico "1" -- "0..*" OrdemServicoServico
-OrdemServico "1" -- "0..1" ContaReceber
-OrdemServico "1" --> "0..1" Garantia
-
-Funcionario "1" -- "0..*" VisitaTecnica
-OrdemServico "1" -- "0..*" VisitaTecnica
-
-Funcionario "1" -- "0..*" AuditoriaLog
+Funcionario "1" --> "*" AuditoriaLog : gera
 ```
 
 ### Descrição das Entidades
@@ -197,13 +169,17 @@ Entidade |	Descrição   |
 
 ```mermaid
 erDiagram
-    %% Entidades Base
+
+%% =========================
+%% Entidades Base
+%% =========================
+
 Funcionario {
     int id PK
     string nome
     string email
     string senha
-    string perfil   
+    string perfil
 }
 
 Cliente {
@@ -215,8 +191,11 @@ Cliente {
     string email
     string endereco
 }
-    
-    %% Entidades de Negócio
+
+%% =========================
+%% Entidades de Negócio
+%% =========================
+
 Aparelho {
     int id PK
     string tipo
@@ -227,7 +206,7 @@ Aparelho {
     int cliente_id FK
 }
 
-Ordem_Servico {
+OrdemServico {
     int id PK
     string status
     string descricao
@@ -266,8 +245,11 @@ VisitaTecnica {
     int ordem_servico_id FK
     int funcionario_id FK
 }
-    
+
+%% =========================
 %% Entidades Financeiras
+%% =========================
+
 ContaReceber {
     int id PK
     decimal valor_total
@@ -277,24 +259,50 @@ ContaReceber {
     date vencimento
     int ordem_servico_id FK
 }
-    
+
+%% =========================
 %% Entidades de Suporte
+%% =========================
+
 Garantia {
     int id PK
     int ordem_servico_id FK
     date data_inicio
     date data_fim
     int prazo_dias
-    string status  
+    string status
 }
 
 AuditoriaLog {
     int id PK
     string acao
     string entidade
-    date data_hora
+    datetime data_hora
     int funcionario_id FK
 }
+
+%% =========================
+%% Relacionamentos
+%% =========================
+
+Cliente ||--o{ Aparelho : possui
+Cliente ||--o{ OrdemServico : solicita
+
+Aparelho ||--o{ OrdemServico : registrado_em
+
+OrdemServico ||--o{ OrdemServicoServico : contem
+Servico ||--o{ OrdemServicoServico : executado_em
+
+OrdemServico ||--|| ContaReceber : gera
+OrdemServico ||--|| Garantia : possui
+
+Funcionario ||--o{ VisitaTecnica : realiza
+OrdemServico ||--o{ VisitaTecnica : gera
+
+Funcionario ||--o{ AuditoriaLog : gera
+
+VisitaTecnica ||--o{ Equipamento : utiliza
+OrdemServicoServico ||--o{ Equipamento : consome
 ```
 
 ---
