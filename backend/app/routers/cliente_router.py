@@ -9,11 +9,10 @@ from backend.app.services.cliente_service import ClienteService
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
 
-@router.post("/", response_model=ClienteResponse, status_code=201)
+@router.post("", response_model=ClienteResponse, status_code=201)
 def create(
     data: ClienteCreate,
     db: Session = Depends(get_db),
-    _: dict = Depends(require_roles("admin", "tecnico")),
 ):
     try:
         return ClienteService(db).create(data)

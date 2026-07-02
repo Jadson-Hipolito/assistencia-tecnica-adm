@@ -26,4 +26,5 @@ __all__ = [
     "aparelho_router",
     "equipamento_router",
     "visita_tecnica_router",
+    "usuario_router",
 ]

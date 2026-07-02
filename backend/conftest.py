@@ -1,6 +1,11 @@
 import sys
 import os
+import tempfile
 from pathlib import Path
+
+# Use banco de dados temporário para testes e garanta estado limpo em cada execução.
+test_db_path = Path(tempfile.gettempdir()) / "assistencia_tecnica_test.sqlite"
+os.environ["DATABASE_URL"] = f"sqlite:///{test_db_path}"
 
 # Adiciona o caminho do backend ao PYTHONPATH
 backend_path = Path(__file__).parent / ".."
@@ -9,6 +14,15 @@ sys.path.insert(0, str(backend_path))
 
 import pytest
 from fastapi.testclient import TestClient
+
+from backend.app.core.database import Base, engine
+
+
+@pytest.fixture(autouse=True)
+def setup_database():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    yield
 
 @pytest.fixture
 def client():

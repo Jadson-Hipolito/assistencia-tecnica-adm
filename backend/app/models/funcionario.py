@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import ( Boolean, Column, DateTime, Integer, Numeric, String,)
 from sqlalchemy.sql import func
 
@@ -45,11 +46,15 @@ class Funcionario(Base):
         comissao_percentual: float = 0.0,
         especialidade: str | None = None,
         ativo: bool = True,
+        id: int | None = None,
     ):
         if nivel_experiencia < 1 or nivel_experiencia > 5:
             raise ValueError("Nível de experiência deve ser entre 1 e 5")
         if comissao_percentual < 0 or comissao_percentual > 30:
             raise ValueError("Comissão deve ser entre 0% e 30%")
+
+        if id is not None:
+            self.id = id
 
         self.nome = nome
         self.email = email
@@ -62,3 +67,20 @@ class Funcionario(Base):
         self.comissao_percentual = comissao_percentual
         self.especialidade = especialidade
         self.ativo = ativo
+
+    def iniciar_execucao_servico(self, servico_executado_id: int) -> dict:
+        return {
+            "servico_executado_id": servico_executado_id,
+            "tecnico_id": self.id,
+            "status": "EM_EXECUCAO",
+            "data_inicio": datetime.utcnow(),
+        }
+
+    def finalizar_execucao_servico(self, servico_executado_id: int, tempo_gasto: float) -> dict:
+        return {
+            "servico_executado_id": servico_executado_id,
+            "tecnico_id": self.id,
+            "status": "CONCLUIDO",
+            "tempo_gasto": tempo_gasto,
+            "data_fim": datetime.utcnow(),
+        }

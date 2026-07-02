@@ -231,13 +231,17 @@ Abaixo apresentamos o modelo conceitual usando o **Mermaid**.
 
 ```mermaid
 erDiagram
-    %% Entidades Base
+
+%% =========================
+%% Entidades Base
+%% =========================
+
 Funcionario {
     int id PK
     string nome
     string email
     string senha
-    string perfil   
+    string perfil
 }
 
 Cliente {
@@ -249,8 +253,11 @@ Cliente {
     string email
     string endereco
 }
-    
-    %% Entidades de Negócio
+
+%% =========================
+%% Entidades de Negócio
+%% =========================
+
 Aparelho {
     int id PK
     string tipo
@@ -261,7 +268,7 @@ Aparelho {
     int cliente_id FK
 }
 
-Ordem_Servico {
+OrdemServico {
     int id PK
     string status
     string descricao
@@ -300,8 +307,11 @@ VisitaTecnica {
     int ordem_servico_id FK
     int funcionario_id FK
 }
-    
+
+%% =========================
 %% Entidades Financeiras
+%% =========================
+
 ContaReceber {
     int id PK
     decimal valor_total
@@ -311,36 +321,50 @@ ContaReceber {
     date vencimento
     int ordem_servico_id FK
 }
-    
+
+%% =========================
 %% Entidades de Suporte
+%% =========================
+
 Garantia {
     int id PK
     int ordem_servico_id FK
     date data_inicio
     date data_fim
     int prazo_dias
-    string status  
+    string status
 }
 
 AuditoriaLog {
     int id PK
     string acao
     string entidade
-    date data_hora
+    datetime data_hora
     int funcionario_id FK
-} 
-        
-%% Relacionamentos de Associação
-    CLIENTE ||--o{ APARELHO : "possui"
-    CLIENTE ||--o{ ORDEM_SERVICO : "solicita"         
-    APARELHO ||--o{ ORDEM_SERVICO : "registrado_em" 
-    SERVICO ||--o{ ORDEMSERVICOSERVICO : "executado_em" 
-    ORDEM_SERVICO ||--o{ ORDEMSERVICOSERVICO : "contem"
-    ORDEM_SERVICO ||--|| CONTA_RECEBER : "gera"
-    ORDEM_SERVICO ||--|| GARANTIA : "contem"
-    FUNCIONARIO ||--o{ VISITA_TECNICA : "realiza"
-    ORDEM_SERVICO ||--o{ VISITA_TECNICA : "gera"    
-    FUNCIONARIO ||--o{ AUDITORIA_LOG : "gera"
+}
+
+%% =========================
+%% Relacionamentos
+%% =========================
+
+Cliente ||--o{ Aparelho : possui
+Cliente ||--o{ OrdemServico : solicita
+
+Aparelho ||--o{ OrdemServico : registrado_em
+
+OrdemServico ||--o{ OrdemServicoServico : contem
+Servico ||--o{ OrdemServicoServico : executado_em
+
+OrdemServico ||--|| ContaReceber : gera
+OrdemServico ||--|| Garantia : possui
+
+Funcionario ||--o{ VisitaTecnica : realiza
+OrdemServico ||--o{ VisitaTecnica : gera
+
+Funcionario ||--o{ AuditoriaLog : gera
+
+VisitaTecnica ||--o{ Equipamento : utiliza
+OrdemServicoServico ||--o{ Equipamento : consome
 ```
 
 

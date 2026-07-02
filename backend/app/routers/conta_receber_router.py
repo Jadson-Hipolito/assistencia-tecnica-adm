@@ -4,17 +4,22 @@ from sqlalchemy.orm import Session
 from backend.app.core.dependencies import get_db
 from backend.app.schemas.conta_receber_schema import (
     ContaReceberCreate,
+    ContaReceberResponse,
     ContaReceberUpdate,
 )
 from backend.app.services.conta_receber_service import ContaReceberService
 
 router = APIRouter(prefix="/contas-receber", tags=["Contas a Receber"])
+alias_router = APIRouter(prefix="/contas_receber", tags=["Contas a Receber"])
 
 
 # =========================
 # GERAR CONTA A RECEBER
 # =========================
-@router.post("/", status_code=201)
+@router.post("", response_model=ContaReceberResponse, status_code=201)
+@router.post("/", response_model=ContaReceberResponse, status_code=201)
+@alias_router.post("", response_model=ContaReceberResponse, status_code=201)
+@alias_router.post("/", response_model=ContaReceberResponse, status_code=201)
 def gerar(data: ContaReceberCreate, db: Session = Depends(get_db)):
     try:
         return ContaReceberService(db).gerar_conta(data)
@@ -25,7 +30,10 @@ def gerar(data: ContaReceberCreate, db: Session = Depends(get_db)):
 # =========================
 # LISTAR TODAS
 # =========================
+@router.get("")
 @router.get("/")
+@alias_router.get("")
+@alias_router.get("/")
 def listar(db: Session = Depends(get_db)):
     return ContaReceberService(db).listar()
 
@@ -33,7 +41,8 @@ def listar(db: Session = Depends(get_db)):
 # =========================
 # BUSCAR POR ID
 # =========================
-@router.get("/{id}")
+@router.get("/{id}", response_model=ContaReceberResponse)
+@alias_router.get("/{id}", response_model=ContaReceberResponse)
 def buscar(id: int, db: Session = Depends(get_db)):
     try:
         return ContaReceberService(db).buscar_por_id(id)
@@ -44,7 +53,8 @@ def buscar(id: int, db: Session = Depends(get_db)):
 # =========================
 # ATUALIZAR CONTA
 # =========================
-@router.put("/{id}")
+@router.put("/{id}", response_model=ContaReceberResponse)
+@alias_router.put("/{id}", response_model=ContaReceberResponse)
 def atualizar(id: int, data: ContaReceberUpdate, db: Session = Depends(get_db)):
     try:
         return ContaReceberService(db).atualizar(id, data)
@@ -55,7 +65,8 @@ def atualizar(id: int, data: ContaReceberUpdate, db: Session = Depends(get_db)):
 # =========================
 # MARCAR COMO PAGO
 # =========================
-@router.patch("/{id}/pagar")
+@router.patch("/{id}/pagar", response_model=ContaReceberResponse)
+@alias_router.patch("/{id}/pagar", response_model=ContaReceberResponse)
 def pagar(id: int, db: Session = Depends(get_db)):
     try:
         return ContaReceberService(db).marcar_como_pago(id)

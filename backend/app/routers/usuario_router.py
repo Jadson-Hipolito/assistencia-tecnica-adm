@@ -8,6 +8,7 @@ from backend.app.services.usuario_service import UsuarioService
 router = APIRouter(prefix="/usuarios", tags=["Usuários"])
 
 
+@router.post("", response_model=UsuarioResponse, status_code=201)
 @router.post("/", response_model=UsuarioResponse, status_code=201)
 def create(data: UsuarioCreate, db: Session = Depends(get_db)):
     try:
@@ -16,6 +17,7 @@ def create(data: UsuarioCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
+@router.get("", response_model=list[UsuarioResponse])
 @router.get("/", response_model=list[UsuarioResponse])
 def list_all(db: Session = Depends(get_db)):
     return UsuarioService(db).listar()

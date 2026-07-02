@@ -1,17 +1,20 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class OrdemServicoServicoBase(BaseModel):
-    ordem_servico_id: int
-    servico_id: int
+    ordem_servico_id: int = Field(alias="servico_executado_id")
+    servico_id: int = Field(alias="equipamento_id")
     quantidade: int
-    valor_aplicado: float
+    valor_aplicado: float = 0.0
+
+    model_config = ConfigDict(populate_by_name=True, extra="ignore")
 
 
 class OrdemServicoServicoCreate(OrdemServicoServicoBase):
-    pass
+    horas_utilizadas: Optional[float] = None
+    observacoes: Optional[str] = None
 
 
 class OrdemServicoServicoResponse(OrdemServicoServicoBase):
