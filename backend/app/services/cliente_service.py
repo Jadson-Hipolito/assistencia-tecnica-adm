@@ -12,39 +12,72 @@ class ClienteService(BaseService):
 
     def create(self, data) -> Cliente:
         payload = self._to_dict(data)
-        document = payload.pop("documento", None)
-        contact = payload.pop("contato", None)
 
-        payload.setdefault("email", None)
-        payload.setdefault("telefone", contact)
-        payload.setdefault("cpf", document)
-        payload.setdefault("cnpj", None)
-        payload.setdefault("endereco", payload.get("endereco"))
+        documento = payload.pop("documento", None)
+        contato = payload.pop("contato", None)
 
-        cliente = Cliente(**payload)
-        return self._commit_and_refresh(cliente)
+        cliente = Cliente(
+            nome=payload.get("nome"),
+            cpf=documento,
+            telefone=contato,
+            endereco=payload.get("endereco"),
+            email=payload.get("email", None),
+            cnpj=None,
+            ativo=payload.get("ativo", True),
+        )
+
+        cliente = self._commit_and_refresh(cliente)
+
+        # 🔥 IMPORTANTE: normalizar resposta para API
+        cliente.documento = cliente.cpf
+        cliente.contato = cliente.telefone
+
+        return cliente
 
     def list_all(self) -> list[Cliente]:
-        return self.repository.get_all()
+        clientes = self.repository.get_all()
+
+        # normaliza para API
+        for c in clientes:
+            c.documento = c.cpf
+            c.contato = c.telefone
+
+        return clientes
 
     def get_by_id(self, cliente_id: int) -> Cliente:
         cliente = self.repository.get_by_id(cliente_id)
         if not cliente:
             raise ValueError("Cliente não encontrado")
+
+        cliente.documento = cliente.cpf
+        cliente.contato = cliente.telefone
         return cliente
 
     def update(self, cliente_id: int, data) -> Cliente:
         cliente = self.get_by_id(cliente_id)
+
         for field, value in self._to_dict(data).items():
             if field in {"id", "created_at", "updated_at"}:
                 continue
             setattr(cliente, field, value)
-        return self.repository.update(cliente)
+
+        cliente = self.repository.update(cliente)
+
+        cliente.documento = cliente.cpf
+        cliente.contato = cliente.telefone
+
+        return cliente
 
     def delete(self, cliente_id: int) -> Cliente:
         cliente = self.get_by_id(cliente_id)
         cliente.ativo = False
-        return self.repository.update(cliente)
+
+        cliente = self.repository.update(cliente)
+
+        cliente.documento = cliente.cpf
+        cliente.contato = cliente.telefone
+
+        return cliente
 
     @staticmethod
     def criar_cliente(db: Session, data):

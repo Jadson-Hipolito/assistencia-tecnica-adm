@@ -39,20 +39,6 @@ def create_app() -> FastAPI:
     )
 
     # ROTAS DA API
-    app.include_router(auth_router)
-    app.include_router(funcionario_router)
-    app.include_router(cliente_router)
-    app.include_router(conta_receber_router)
-    app.include_router(ordem_servico_router)
-    app.include_router(servico_router)
-    app.include_router(pagamento_router)
-    app.include_router(aparelho_router)
-    app.include_router(equipamento_router)
-    app.include_router(visita_tecnica_router)
-    app.include_router(auditoria_router)
-    app.include_router(backup_router)
-    app.include_router(usuario_router)
-    app.include_router(relatorio_router)
     app.include_router(api_router)
 
     # FRONTEND (index.html)
