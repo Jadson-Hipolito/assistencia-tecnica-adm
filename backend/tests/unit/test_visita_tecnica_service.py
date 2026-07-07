@@ -35,3 +35,52 @@ def test_agendar_visita():
     resultado = service.agendar(data)
 
     assert resultado.status == "AGENDADA"
+
+
+def test_registrar_execucao():
+
+    db = Mock()
+
+    service = VisitaTecnicaService(db)
+
+    visita = Mock()
+
+    service._get_or_raise = Mock(
+        return_value=visita
+    )
+
+    resultado = service.registrar_execucao(
+        1,
+        "Cliente atendido"
+    )
+
+    assert resultado.status == "CONCLUIDA"
+    assert resultado.resultado == "Cliente atendido"
+
+    db.commit.assert_called_once()
+
+
+def test_update_visita():
+
+    db = Mock()
+
+    service = VisitaTecnicaService(db)
+
+    visita = Mock()
+
+    service.get_by_id = Mock(
+        return_value=visita
+    )
+
+    data = {
+    "resultado": "Finalizado",
+    "id": 1,
+    "created_at": None,
+    "updated_at": None
+}
+
+    resultado = service.update(1, data)
+
+    assert resultado.resultado == "Finalizado"
+
+    db.commit.assert_called_once()
