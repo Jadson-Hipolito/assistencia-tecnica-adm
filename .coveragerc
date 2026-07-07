@@ -1,0 +1,8 @@
+[run]
+source = backend
+relative_files = True
+
+[report]
+omit =
+    */tests/*
+    */__pycache__/*
