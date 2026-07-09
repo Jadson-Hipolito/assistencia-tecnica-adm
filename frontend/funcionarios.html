@@ -154,7 +154,11 @@
 
         <input type="text" id="nome" placeholder="Nome">
         <input type="email" id="email" placeholder="Email">
+        <input type="text" id="telefone" placeholder="Telefone">
+        <input type="text" id="cpf" placeholder="CPF">
         <input type="text" id="cargo" placeholder="Cargo">
+        <input type="number" id="salario" placeholder="Salário">
+        <input type="password" id="senha" placeholder="Senha">
 
         <button onclick="addFuncionario()">Adicionar</button>
     </div>
@@ -182,7 +186,17 @@
 </div>
 
 <script>
-const API = "http://localhost:8000/api/funcionarios";
+const API = "http://localhost:8000/api/funcionarios/";
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    window.location.href = "index.html";
+}
+
+const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+};
 
 /* NAV */
 function go(page) {
@@ -191,53 +205,222 @@ function go(page) {
 
 /* LOGOUT */
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_type");
+    localStorage.removeItem("usuario");
+    window.location.replace("index.html");
 }
 
 /* LISTAR */
 async function loadFuncionarios() {
-    const res = await fetch(API);
-    const data = await res.json();
 
-    const table = document.getElementById("funcionariosTable");
-    table.innerHTML = "";
+    try {
 
-    data.forEach(f => {
-        table.innerHTML += `
-            <tr>
-                <td>${f.id}</td>
-                <td>${f.nome}</td>
-                <td>${f.email || ''}</td>
-                <td>${f.cargo || ''}</td>
-                <td class="actions">
-                    <button onclick="deleteFuncionario(${f.id})">Excluir</button>
-                </td>
-            </tr>
-        `;
-    });
+        const res = await fetch(API, {
+            method: "GET",
+            headers: headers
+        });
+
+        if (!res.ok) {
+            console.log(await res.text());
+            alert("Erro ao carregar funcionários.");
+            return;
+        }
+
+        const data = await res.json();
+
+        const table = document.getElementById("funcionariosTable");
+        table.innerHTML = "";
+
+        data.forEach(f => {
+
+            table.innerHTML += `
+                <tr>
+                    <td>${f.id}</td>
+                    <td>${f.nome}</td>
+                    <td>${f.email || ""}</td>
+                    <td>${f.cargo || ""}</td>
+                    <td class="actions">
+                        <button
+                            style="background:#2563eb;margin-right:5px;"
+                            onclick="editarFuncionario(${f.id})">
+                            Editar
+                        </button>
+
+                        <button
+                            style="background:#dc2626;"
+                            onclick="deleteFuncionario(${f.id})">
+                            Excluir
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+        });
+
+    } catch (erro) {
+
+        console.error(erro);
+        alert("Erro ao conectar ao servidor.");
+
+    }
+
 }
 
 /* CREATE */
 async function addFuncionario() {
+
     const nome = document.getElementById("nome").value;
     const email = document.getElementById("email").value;
+    const telefone = document.getElementById("telefone").value;
+    const cpf = document.getElementById("cpf").value;
     const cargo = document.getElementById("cargo").value;
+    const salario = document.getElementById("salario").value;
+    const senha = document.getElementById("senha").value;
 
-    await fetch(API, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, cargo })
-    });
+    try {
 
-    loadFuncionarios();
+        const res = await fetch(API, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+                nome,
+                cpf,
+                email,
+                telefone,
+                cargo,
+                salario: Number(salario),
+                senha
+            })
+        });
+
+        const texto = await res.text();
+
+        if (!res.ok) {
+            console.log(texto);
+            alert("Erro ao cadastrar funcionário.");
+            return;
+        }
+
+        alert("Funcionário cadastrado com sucesso!");
+
+        document.getElementById("nome").value = "";
+        document.getElementById("cpf").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("telefone").value = "";
+        document.getElementById("cargo").value = "";
+        document.getElementById("salario").value = "";
+        document.getElementById("senha").value = "";
+
+        loadFuncionarios();
+
+    } catch (erro) {
+        console.error(erro);
+        alert("Erro ao conectar com o servidor.");
+    }
+}
+
+async function editarFuncionario(id) {
+
+    const nome = prompt("Novo nome:");
+
+    if (nome === null) return;
+
+    const email = prompt("Novo email:");
+
+    if (email === null) return;
+
+    const cargo = prompt("Novo cargo:");
+
+    if (cargo === null) return;
+
+    try {
+
+        const res = await fetch(`${API}${id}`, {
+
+            method: "PUT",
+
+            headers: headers,
+
+            body: JSON.stringify({
+                nome,
+                email,
+                cargo
+            })
+
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+
+            console.log(data);
+
+            if (data.detail) {
+
+                if (Array.isArray(data.detail)) {
+                    alert(data.detail.map(e => e.msg).join("\n"));
+                } else {
+                    alert(data.detail);
+                }
+
+            } else {
+                alert("Erro ao atualizar funcionário.");
+            }
+
+            return;
+
+        }
+
+        alert("Funcionário atualizado com sucesso!");
+
+        loadFuncionarios();
+
+    } catch (erro) {
+
+        console.error(erro);
+        alert("Erro ao conectar ao servidor.");
+
+    }
+
 }
 
 /* DELETE */
 async function deleteFuncionario(id) {
-    await fetch(`${API}/${id}`, { method: "DELETE" });
-    loadFuncionarios();
+
+    if (!confirm("Deseja realmente excluir este funcionário?")) {
+        return;
+    }
+
+    try {
+
+        const res = await fetch(`${API}${id}`, {
+
+            method: "DELETE",
+
+            headers: headers
+
+        });
+
+        if (!res.ok) {
+
+            console.log(await res.text());
+            alert("Erro ao excluir funcionário.");
+            return;
+
+        }
+
+        alert("Funcionário excluído com sucesso.");
+
+        loadFuncionarios();
+
+    } catch (erro) {
+
+        console.error(erro);
+        alert("Erro ao conectar ao servidor.");
+
+    }
+
 }
 
 /* INIT */
