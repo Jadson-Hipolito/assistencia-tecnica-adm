@@ -169,7 +169,7 @@ function logout() {
    USUÁRIO
 ===================== */
 
-fetch("http://localhost:8000/auth/me", {
+fetch("http://localhost:8000/api/auth/me", {
     headers: {
         Authorization: `Bearer ${token}`
     }

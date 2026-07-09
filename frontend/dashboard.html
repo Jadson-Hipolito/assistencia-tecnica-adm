@@ -59,7 +59,6 @@
         color: #111827;
     }
 
-    /* GRID */
     .dashboard {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -126,40 +125,74 @@
 
 <script>
 
+console.log("Dashboard carregado.");
+
 const token = localStorage.getItem("access_token");
 
-if(!token){
-    window.location.href="login.html";
+console.log("Token:", token);
+
+if (!token) {
+    window.location.href = "login.html";
 }
 
-/* NAV */
-function go(page){
+function go(page) {
     window.location.href = page;
 }
 
-/* USER */
-fetch("http://localhost:8000/auth/me", {
+fetch("http://localhost:8000/api/auth/me", {
+
+    method: "GET",
+
     headers: {
-        Authorization: `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/json"
     }
+
 })
-.then(r => {
-    if(!r.ok){
+
+.then(async (response) => {
+
+    console.log("Status:", response.status);
+
+    if (!response.ok) {
+
+        console.log(await response.text());
+
         localStorage.clear();
-        window.location.href="login.html";
+
+        window.location.href = "login.html";
+
+        return null;
     }
-    return r.json();
+
+    return response.json();
+
 })
-.then(usuario => {
-    document.getElementById("usuario").innerHTML =
-        `Bem-vindo, ${usuario.nome}`;
+
+.then((usuario) => {
+
+    if (!usuario) return;
+
+    console.log(usuario);
+
+    document.getElementById("usuario").textContent =
+        "Bem-vindo, " + usuario.nome;
+
+})
+
+.catch((erro) => {
+
+    console.error("Erro:", erro);
+
 });
 
-/* LOGOUT */
-document.getElementById("logout").onclick = () => {
+document.getElementById("logout").addEventListener("click", () => {
+
     localStorage.clear();
+
     window.location.href = "login.html";
-};
+
+});
 
 </script>
 

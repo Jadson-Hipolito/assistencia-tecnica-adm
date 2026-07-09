@@ -35,9 +35,8 @@ class ClienteService(BaseService):
         return cliente
 
     def list_all(self) -> list[Cliente]:
-        clientes = self.repository.get_all()
+        clientes = [c for c in self.repository.get_all() if c.ativo]
 
-        # normaliza para API
         for c in clientes:
             c.documento = c.cpf
             c.contato = c.telefone
@@ -59,6 +58,9 @@ class ClienteService(BaseService):
         for field, value in self._to_dict(data).items():
             if field in {"id", "created_at", "updated_at"}:
                 continue
+            if value is None:
+                continue
+
             setattr(cliente, field, value)
 
         cliente = self.repository.update(cliente)
