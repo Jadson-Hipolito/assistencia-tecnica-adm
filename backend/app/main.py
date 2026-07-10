@@ -3,24 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.app.core.database import Base, engine
-from backend.app.routers.auth_router import router as auth_router
-from backend.app.routers.funcionario_router import router as funcionario_router
-from backend.app.routers.cliente_router import router as cliente_router
-from backend.app.routers.conta_receber_router import router as conta_receber_router
-from backend.app.routers.ordem_servico_router import router as ordem_servico_router
-from backend.app.routers.servico_router import router as servico_router
-from backend.app.routers.pagamento_router import router as pagamento_router
-from backend.app.routers.auditoria_router import router as auditoria_router
-from backend.app.routers.backup_router import router as backup_router
-from backend.app.routers.aparelho_router import router as aparelho_router
-from backend.app.routers.equipamento_router import router as equipamento_router
-from backend.app.routers.visita_tecnica_router import router as visita_tecnica_router
-from backend.app.routers.usuario_router import router as usuario_router
-from backend.app.routers.relatorio_router import router as relatorio_router
 from backend.app.routers.api_router import api_router
 
 
 def create_app() -> FastAPI:
+
     app = FastAPI(
         title="Sistema de Gestão de Assistência Técnica",
         description="API para gestão de assistência técnica",
@@ -38,28 +25,32 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+
+    # ==========================
     # ROTAS DA API
-    app.include_router(auth_router)
-    app.include_router(funcionario_router)
-    app.include_router(cliente_router)
-    app.include_router(conta_receber_router)
-    app.include_router(ordem_servico_router)
-    app.include_router(servico_router)
-    app.include_router(pagamento_router)
-    app.include_router(aparelho_router)
-    app.include_router(equipamento_router)
-    app.include_router(visita_tecnica_router)
-    app.include_router(auditoria_router)
-    app.include_router(backup_router)
-    app.include_router(usuario_router)
-    app.include_router(relatorio_router)
+    # ==========================
+
     app.include_router(api_router)
 
-    # FRONTEND (index.html)
-    app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+
+    # ==========================
+    # FRONTEND
+    # ==========================
+
+    app.mount(
+        "/",
+        StaticFiles(
+            directory="frontend",
+            html=True
+        ),
+        name="frontend"
+    )
+
 
     return app
 
 
 app = create_app()
+
+
 Base.metadata.create_all(bind=engine)

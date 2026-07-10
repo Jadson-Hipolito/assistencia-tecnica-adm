@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 
 
 def test_dashboard_resumo(client: TestClient):
-    response = client.get("/relatorios/dashboard/resumo")
+    response = client.get("/api/relatorios/dashboard/resumo")
 
     assert response.status_code == 200
     data = response.json()
@@ -15,7 +15,7 @@ def test_dashboard_resumo(client: TestClient):
 
 
 def test_relatorio_usuarios(client: TestClient):
-    response = client.get("/relatorios/usuarios")
+    response = client.get("/api/relatorios/usuarios")
 
     assert response.status_code == 200
     data = response.json()
@@ -26,7 +26,7 @@ def test_relatorio_usuarios(client: TestClient):
 
 
 def test_relatorio_clientes(client: TestClient):
-    response = client.get("/relatorios/clientes")
+    response = client.get("/api/relatorios/clientes")
 
     assert response.status_code == 200
     data = response.json()
@@ -37,7 +37,7 @@ def test_relatorio_clientes(client: TestClient):
 
 
 def test_relatorio_funcionarios(client: TestClient):
-    response = client.get("/relatorios/funcionarios")
+    response = client.get("/api/relatorios/funcionarios")
 
     assert response.status_code == 200
     data = response.json()
@@ -48,7 +48,7 @@ def test_relatorio_funcionarios(client: TestClient):
 
 
 def test_relatorio_completo(client: TestClient):
-    response = client.get("/relatorios/completo")
+    response = client.get("/api/relatorios/completo")
 
     assert response.status_code == 200
     data = response.json()

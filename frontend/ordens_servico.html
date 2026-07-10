@@ -158,9 +158,9 @@
         <input type="number" id="equipamento_id" placeholder="ID Equipamento">
 
         <select id="status">
-            <option value="aberta">Aberta</option>
-            <option value="em_andamento">Em andamento</option>
-            <option value="finalizada">Finalizada</option>
+            <option value="ABERTA">Aberta</option>
+            <option value="EM_ANDAMENTO">Em andamento</option>
+            <option value="FINALIZADA">Finalizada</option>
         </select>
 
         <button onclick="addOS()">Criar OS</button>
@@ -190,7 +190,17 @@
 </div>
 
 <script>
-const API = "http://localhost:8000/api/ordem-servico";
+const API = "http://localhost:8000/api/ordens/";
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    window.location.href = "index.html";
+}
+
+const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+};
 
 /* NAV */
 function go(page) {
@@ -199,15 +209,25 @@ function go(page) {
 
 /* LOGOUT */
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_type");
+    localStorage.removeItem("usuario");
+    window.location.replace("index.html");
 }
 
 /* LISTAR */
 async function loadOS() {
-    const res = await fetch(API);
+    const res = await fetch(API, {
+        method: "GET",
+        headers: headers
+    });
     const data = await res.json();
+
+    if (!res.ok) {
+        console.log(data);
+        alert("Erro ao carregar ordens.");
+        return;
+    }
 
     const table = document.getElementById("osTable");
     table.innerHTML = "";
@@ -222,9 +242,9 @@ async function loadOS() {
         table.innerHTML += `
             <tr>
                 <td>${os.id}</td>
-                <td>${os.descricao}</td>
+                <td>${os.descricao_problema}</td>
                 <td>${os.cliente_id}</td>
-                <td>${os.equipamento_id}</td>
+                <td>${os.aparelho_id}</td>
                 <td class="${statusClass}">${os.status}</td>
                 <td class="actions">
                     <button onclick="deleteOS(${os.id})">Excluir</button>
@@ -236,28 +256,68 @@ async function loadOS() {
 
 /* CREATE */
 async function addOS() {
-    const descricao = document.getElementById("descricao").value;
+    const descricao_problema = document.getElementById("descricao").value;
     const cliente_id = document.getElementById("cliente_id").value;
-    const equipamento_id = document.getElementById("equipamento_id").value;
+    const aparelho_id = document.getElementById("equipamento_id").value;
     const status = document.getElementById("status").value;
 
-    await fetch(API, {
+    const res = await fetch(API, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify({
-            descricao,
-            cliente_id: Number(cliente_id),
-            equipamento_id: Number(equipamento_id),
-            status
+            descricao_problema,
+            status,
+            cliente_id,
+            aparelho_id
         })
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+
+        console.log(JSON.stringify(data, null, 2));
+
+        if (data.detail) {
+
+            alert(
+                Array.isArray(data.detail)
+                    ? data.detail.map(e => e.msg).join("\n")
+                    : data.detail
+            );
+
+        } else {
+
+            alert("Erro ao criar ordem.");
+
+        }
+
+        return;
+    }
+
+    alert("Ordem criada com sucesso!");
+
+    document.getElementById("descricao_problema").value = "";
+    document.getElementById("cliente_id").value = "";
+    document.getElementById("aparelho_id").value = "";
+    document.getElementById("status").value = "ABERTA";
 
     loadOS();
 }
 
 /* DELETE */
 async function deleteOS(id) {
-    await fetch(`${API}/${id}`, { method: "DELETE" });
+    const res = await fetch(`${API}${id}`, {
+        method: "DELETE",
+        headers: headers
+    });
+
+    if (!res.ok) {
+        console.log(await res.text());
+        alert("Erro ao excluir.");
+        return;
+    }
+
     loadOS();
 }
 

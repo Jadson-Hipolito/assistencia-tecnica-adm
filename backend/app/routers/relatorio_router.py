@@ -7,6 +7,8 @@ from backend.app.core.dependencies import get_db
 from backend.app.models.cliente import Cliente
 from backend.app.models.funcionario import Funcionario
 from backend.app.models.usuario import Usuario
+from backend.app.models.ordem_servico import OrdemServico
+from backend.app.models.conta_receber import ContaReceber
 
 router = APIRouter(prefix="/relatorios", tags=["Relatórios"])
 
@@ -101,4 +103,23 @@ def relatorio_completo(db: Session = Depends(get_db)):
             "total_geral": total_clientes + total_usuarios + total_funcionarios,
         },
         "gerado_em": datetime.now().isoformat(),
+    }
+
+@router.get("/")
+def dashboard(db: Session = Depends(get_db)):
+
+    total_clientes = db.query(Cliente).count()
+
+    total_funcionarios = db.query(Funcionario).count()
+
+    total_ordens = db.query(OrdemServico).count()
+
+    total_pagamentos = db.query(ContaReceber).count()
+
+
+    return {
+        "clientes": total_clientes,
+        "funcionarios": total_funcionarios,
+        "ordens_servico": total_ordens,
+        "pagamentos": total_pagamentos
     }

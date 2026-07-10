@@ -8,7 +8,7 @@ from backend.app.schemas.conta_receber_schema import (
 )
 from backend.app.services.conta_receber_service import ContaReceberService
 
-router = APIRouter(prefix="/contas-receber", tags=["Contas a Receber"])
+router = APIRouter(prefix="/contas_receber", tags=["Contas a Receber"])
 
 
 # =========================
@@ -55,7 +55,7 @@ def atualizar(id: int, data: ContaReceberUpdate, db: Session = Depends(get_db)):
 # =========================
 # MARCAR COMO PAGO
 # =========================
-@router.patch("/{id}/pagar")
+@router.post("/{id}/pagar", status_code=200)
 def pagar(id: int, db: Session = Depends(get_db)):
     try:
         return ContaReceberService(db).marcar_como_pago(id)

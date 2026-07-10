@@ -70,10 +70,10 @@
 
         .card {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
             transition: 0.2s;
         }
 
@@ -124,7 +124,7 @@
 
     <!-- AÇÕES -->
     <div class="actions">
-        <h2>Dashboard de Relatórios</h2>
+        <h3>Relatórios do Sistema</h3>
         <button onclick="loadRelatorios()">Atualizar Dados</button>
     </div>
 
@@ -156,33 +156,71 @@
 </div>
 
 <script>
-const API = "http://localhost:8000/api/relatorios";
+const API = "http://localhost:8000/api/relatorios/";
 
 /* NAV */
 function go(page) {
     window.location.href = page;
 }
 
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    window.location.href = "index.html";
+}
+
 /* LOGOUT */
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_type");
+    localStorage.removeItem("usuario");
+
+    window.location.replace("index.html");
 }
 
 /* LOAD */
 async function loadRelatorios() {
+
     try {
-        const res = await fetch(API);
+
+        const res = await fetch(API, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+
         const data = await res.json();
 
-        document.getElementById("clientes").innerText = data.clientes || 0;
-        document.getElementById("funcionarios").innerText = data.funcionarios || 0;
-        document.getElementById("ordens").innerText = data.ordens_servico || 0;
-        document.getElementById("pagamentos").innerText = data.pagamentos || 0;
+
+        if (!res.ok) {
+            console.log(data);
+            alert("Erro ao carregar relatórios.");
+            return;
+        }
+
+
+        document.getElementById("clientes").innerText =
+            data.clientes ?? 0;
+
+
+        document.getElementById("funcionarios").innerText =
+            data.funcionarios ?? 0;
+
+
+        document.getElementById("ordens").innerText =
+            data.ordens_servico ?? 0;
+
+
+        document.getElementById("pagamentos").innerText =
+            data.pagamentos ?? 0;
+
 
     } catch (err) {
-        alert("Erro ao carregar relatórios");
+
+        console.error(err);
+        alert("Servidor indisponível.");
+
     }
 }
 

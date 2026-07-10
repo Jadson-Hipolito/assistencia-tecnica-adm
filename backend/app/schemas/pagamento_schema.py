@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field
-from typing import Optional
 
 
 class PagamentoCreate(BaseModel):
     ordem_servico_id: int
     valor: float = Field(..., gt=0)
-    forma_pagamento: Optional[str] = "PIX"
+    forma_pagamento: str
+    status: str
 
 
 class PagamentoResponse(BaseModel):
@@ -13,3 +13,4 @@ class PagamentoResponse(BaseModel):
     ordem_servico_id: int
     valor: float
     forma_pagamento: str
+    status: str

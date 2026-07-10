@@ -21,14 +21,14 @@ const request = async (endpoint, options = {}) => {
 }
 
 export const login = async (email, senha) => {
-  return request('/auth/login', {
+  return request('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, senha }),
   })
 }
 
 export const getProfile = async () => {
-  return request('/auth/me')
+  return request('/api/auth/me')
 }
 
 export const listarClientes = async () => {

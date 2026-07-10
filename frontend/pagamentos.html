@@ -150,7 +150,9 @@
     <button onclick="go('auditoria.html')">Auditoria</button>
     <button onclick="go('backup.html')">Backup</button>
 
-    <button onclick="logout()" style="background:#dc2626;">Sair</button>
+    <button onclick="logout()" style="background:#dc2626;">
+        Sair
+    </button>
 </nav>
 
 <div class="container">
@@ -162,9 +164,16 @@
         <input type="number" id="ordem_servico_id" placeholder="ID da OS">
         <input type="number" id="valor" placeholder="Valor">
 
+        <select id="forma_pagamento">
+            <option value="PIX">PIX</option>
+            <option value="DINHEIRO">Dinheiro</option>
+            <option value="CARTAO">Cartão</option>
+            <option value="TRANSFERENCIA">Transferência</option>
+        </select>
+
         <select id="status">
-            <option value="pendente">Pendente</option>
-            <option value="pago">Pago</option>
+            <option value="PENDENTE">Pendente</option>
+            <option value="PAGO">Pago</option>
         </select>
 
         <button onclick="addPagamento()">Registrar Pagamento</button>
@@ -183,6 +192,7 @@
                 <th>OS</th>
                 <th>Valor</th>
                 <th>Status</th>
+                <th>Forma Pagamento</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -193,71 +203,145 @@
 </div>
 
 <script>
-const API = "http://localhost:8000/api/pagamentos";
+const API = "http://localhost:8000/api/pagamentos/";
+
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    window.location.href = "index.html";
+}
+
+const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+};
+
 
 /* NAV */
 function go(page) {
     window.location.href = page;
 }
 
+
 /* LOGOUT */
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
+
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_type");
+    localStorage.removeItem("usuario");
+    window.location.replace("index.html");
 }
 
 /* LISTAR */
 async function loadPagamentos() {
-    const res = await fetch(API);
-    const data = await res.json();
+    try {
+        const res = await fetch(API, {
+            method: "GET",
+            headers: headers
+        });
 
-    const table = document.getElementById("pagamentosTable");
-    table.innerHTML = "";
+        if (!res.ok) {
+            throw new Error("Erro ao carregar pagamentos.");
+        }
 
-    data.forEach(p => {
+        const data = await res.json();
 
-        const statusClass = p.status === "pago"
-            ? "status-pago"
-            : "status-pendente";
+        const table = document.getElementById("pagamentosTable");
+        table.innerHTML = "";
 
-        table.innerHTML += `
-            <tr>
-                <td>${p.id}</td>
-                <td>${p.ordem_servico_id}</td>
-                <td>R$ ${p.valor}</td>
-                <td class="${statusClass}">${p.status}</td>
-                <td class="actions">
-                    <button onclick="deletePagamento(${p.id})">Excluir</button>
-                </td>
-            </tr>
-        `;
-    });
+        data.forEach(p => {
+
+            const status = (p.status || "PENDENTE").toUpperCase();
+
+            const statusClass = status === "PAGO"
+                ? "status-pago"
+                : "status-pendente";
+
+            table.innerHTML += `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.ordem_servico_id}</td>
+                    <td>R$ ${Number(p.valor).toFixed(2)}</td>
+                    <td class="${statusClass}">${status}</td>
+                    <td>${p.forma_pagamento || "-"}</td>
+                    <td class="actions">
+                        <button onclick="deletePagamento(${p.id})">
+                            Excluir
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao carregar pagamentos.");
+    }
 }
 
 /* CREATE */
 async function addPagamento() {
-    const ordem_servico_id = document.getElementById("ordem_servico_id").value;
-    const valor = document.getElementById("valor").value;
+
+    const ordem_servico_id = Number(document.getElementById("ordem_servico_id").value);
+    const valor = Number(document.getElementById("valor").value);
+    const forma_pagamento = document.getElementById("forma_pagamento").value;
     const status = document.getElementById("status").value;
 
-    await fetch(API, {
+    if (!ordem_servico_id || !valor) {
+        alert("Preencha todos os campos.");
+        return;
+    }
+
+    const response = await fetch(API, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify({
-            ordem_servico_id: Number(ordem_servico_id),
-            valor: Number(valor),
+            ordem_servico_id,
+            valor,
+            forma_pagamento,
             status
         })
     });
 
-    loadPagamentos();
+    if (response.ok) {
+        alert("Pagamento registrado com sucesso!");
+        loadPagamentos();
+    } else {
+        const erro = await response.text();
+        console.error(erro);
+        alert("Erro ao registrar pagamento.");
+    }
 }
 
 /* DELETE */
 async function deletePagamento(id) {
-    await fetch(`${API}/${id}`, { method: "DELETE" });
-    loadPagamentos();
+
+    const confirmar = confirm("Deseja realmente excluir este pagamento?");
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`${API}${id}`, {
+            method: "DELETE",
+            headers: headers
+        });
+
+        if (response.ok) {
+            alert("Pagamento excluído com sucesso!");
+            loadPagamentos();
+        } else {
+            const erro = await response.text();
+            console.error(erro);
+            alert("Erro ao excluir pagamento.");
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert("Erro de conexão com o servidor.");
+    }
 }
 
 /* INIT */

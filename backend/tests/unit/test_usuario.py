@@ -47,30 +47,30 @@ class TestUsuarioAPI:
     """Testes para os endpoints de usuário"""
 
     def test_listar_usuarios(self, client):
-        response = client.get("/usuarios")
+        response = client.get("/api/usuarios/")
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
     def test_criar_usuario_com_dados_validos(self, client, test_user_data):
-        response = client.post("/usuarios", json=test_user_data)
+        response = client.post("/api/usuarios/", json=test_user_data)
         assert response.status_code in [200, 201]
         assert "id" in response.json()
 
     def test_criar_usuario_email_duplicado(self, client, test_user_data):
         # Primeira criação
-        client.post("/usuarios", json=test_user_data)
+        client.post("/api/usuarios/", json=test_user_data)
         # Segunda com mesmo email
-        response = client.post("/usuarios", json=test_user_data)
+        response = client.post("/api/usuarios/", json=test_user_data)
         assert response.status_code == 400
 
     def test_buscar_usuario_por_id(self, client):
-        response = client.get("/usuarios/1")
+        response = client.get("/api/usuarios/1")
         assert response.status_code in [200, 404]
 
     def test_atualizar_usuario(self, client):
-        response = client.put("/usuarios/1", json={"nome": "Nome Atualizado"})
+        response = client.put("/api/usuarios/1", json={"nome": "Nome Atualizado"})
         assert response.status_code in [200, 404]
 
     def test_desativar_usuario(self, client):
-        response = client.delete("/usuarios/1")
+        response = client.delete("/api/usuarios/1")
         assert response.status_code in [200, 404]

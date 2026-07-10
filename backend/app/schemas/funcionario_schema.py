@@ -6,9 +6,11 @@ from pydantic import BaseModel, EmailStr, ConfigDict
 
 class FuncionarioBase(BaseModel):
     nome: str
+    cpf: str
     email: EmailStr
     cargo: str
     telefone: str
+    salario: Optional[float] = None
     ativo: bool = True
 
 
@@ -21,6 +23,7 @@ class FuncionarioUpdate(BaseModel):
     email: Optional[EmailStr] = None
     cargo: Optional[str] = None
     telefone: Optional[str] = None
+    salario: Optional[float] = None
     ativo: Optional[bool] = None
 
 

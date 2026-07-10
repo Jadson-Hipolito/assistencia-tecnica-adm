@@ -25,13 +25,21 @@ class FuncionarioService(BaseService):
     @classmethod
     def update(cls, db: Session, funcionario_id: int, data) -> Funcionario:
         service = cls(db)
+
         funcionario = service.buscar_por_id(funcionario_id)
-        for field, value in service._to_dict(data).items():
-            if field in {"id", "created_at", "updated_at"}:
+
+        dados = data.model_dump(exclude_unset=True)
+
+        for field, value in dados.items():
+    
+            if field in {"id", "cpf", "created_at", "updated_at"}:
                 continue
+
             setattr(funcionario, field, value)
+
         service.db.commit()
         service.db.refresh(funcionario)
+
         return funcionario
 
     @classmethod
@@ -45,10 +53,12 @@ class FuncionarioService(BaseService):
 
         funcionario = Funcionario(
             nome=data.nome,
+            cpf=data.cpf,
             email=data.email,
             senha=self._hash_senha(data.senha),
-            cargo=getattr(data, "cargo", getattr(data, "perfil", "tecnico")),
+            cargo=data.cargo,
             telefone=data.telefone,
+            salario=data.salario or 0,
             ativo=True,
         )
 
