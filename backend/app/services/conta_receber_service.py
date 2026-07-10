@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from sqlalchemy.orm import Session
 
@@ -7,11 +7,35 @@ from backend.app.services.base_service import BaseService
 
 
 class ContaReceberService(BaseService):
+
     def __init__(self, db: Session):
         super().__init__(db)
 
+
     def gerar_conta(self, data) -> ContaReceber:
-        conta = ContaReceber(**self._to_dict(data))
+
+        payload = self._to_dict(data)
+
+        # Campos obrigatórios
+        if payload.get("data_vencimento") is None:
+            payload["data_vencimento"] = (
+                date.today() + timedelta(days=30)
+            )
+
+        if payload.get("valor_multa") is None:
+            payload["valor_multa"] = 0
+
+        if payload.get("valor_desconto") is None:
+            payload["valor_desconto"] = 0
+
+
+        # Se já estiver pago
+        if payload.get("status", "").upper() == "PAGO":
+            payload["data_pagamento"] = datetime.now()
+
+
+        conta = ContaReceber(**payload)
+
         return self._commit_and_refresh(conta)
 
     def listar(self) -> list[ContaReceber]:

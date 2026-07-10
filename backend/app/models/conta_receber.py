@@ -44,9 +44,17 @@ class ContaReceber(Base):
     data_pagamento = Column(DateTime(timezone=True), nullable=True)
 
     # =========================
-    # Status
+    # Pagamento
     # =========================
-    status = Column(String(20), default="PENDENTE")
+    forma_pagamento = Column(
+        String(50),
+        nullable=True
+    )
+
+    status = Column(
+        String(20),
+        default="PENDENTE"
+    )
 
     # =========================
     # Relationships
