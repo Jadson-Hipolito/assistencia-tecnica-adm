@@ -185,20 +185,114 @@
         <button class="refresh" onclick="loadPagamentos()">Atualizar</button>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>OS</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th>Forma Pagamento</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>OS</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th>Forma Pagamento</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
 
-        <tbody id="pagamentosTable"></tbody>
-    </table>
+    <tbody id="pagamentosTable"></tbody>
+</table>
+
+
+<!-- ÁREA DE EDIÇÃO -->
+<div id="editarPagamentoBox" class="form" style="display:none; margin-top:20px;">
+
+    <h3>Editar Pagamento</h3>
+
+    <input type="hidden" id="editar_id">
+
+
+    <select id="campoEditar" onchange="mostrarCampoEdicao()">
+
+        <option value="">
+            Escolha o que editar
+        </option>
+
+        <option value="valor">
+            Valor
+        </option>
+
+        <option value="status">
+            Status
+        </option>
+
+        <option value="forma_pagamento">
+            Forma de Pagamento
+        </option>
+
+    </select>
+
+
+    <div id="campoValor" style="display:none;">
+
+        <input 
+            type="number" 
+            id="novoValor"
+            placeholder="Novo valor"
+        >
+
+    </div>
+
+
+    <div id="campoStatus" style="display:none;">
+
+        <select id="novoStatus">
+
+            <option value="PENDENTE">
+                Pendente
+            </option>
+
+            <option value="PAGO">
+                Pago
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div id="campoForma" style="display:none;">
+
+        <select id="novaForma">
+
+            <option value="PIX">
+                PIX
+            </option>
+
+            <option value="DINHEIRO">
+                Dinheiro
+            </option>
+
+            <option value="CARTAO">
+                Cartão
+            </option>
+
+            <option value="TRANSFERENCIA">
+                Transferência
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button onclick="salvarEdicao()">
+        Salvar Alteração
+    </button>
+
+
+    <button onclick="fecharEdicao()">
+        Cancelar
+    </button>
+
+</div>
 
 </div>
 
@@ -232,6 +326,72 @@ function logout() {
     window.location.replace("index.html");
 }
 
+/* ABRIR FORMULÁRIO DE EDIÇÃO */
+function editarPagamento(id) {
+
+    document.getElementById("editarPagamentoBox").style.display = "block";
+
+    document.getElementById("editar_id").value = id;
+
+    // limpa a seleção anterior
+    document.getElementById("campoEditar").value = "";
+
+    // esconde os campos
+    document.getElementById("campoValor").style.display = "none";
+    document.getElementById("campoStatus").style.display = "none";
+    document.getElementById("campoForma").style.display = "none";
+
+
+    // rola a tela até o formulário
+    document.getElementById("editarPagamentoBox")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+
+/* MOSTRAR CAMPO ESCOLHIDO */
+function mostrarCampoEdicao() {
+
+    const campo = document.getElementById("campoEditar").value;
+
+
+    // esconde todos primeiro
+    document.getElementById("campoValor").style.display = "none";
+    document.getElementById("campoStatus").style.display = "none";
+    document.getElementById("campoForma").style.display = "none";
+
+
+    if (campo === "valor") {
+
+        document.getElementById("campoValor").style.display = "block";
+
+    }
+
+
+    if (campo === "status") {
+
+        document.getElementById("campoStatus").style.display = "block";
+
+    }
+
+
+    if (campo === "forma_pagamento") {
+
+        document.getElementById("campoForma").style.display = "block";
+
+    }
+
+}
+
+
+/* FECHAR FORMULÁRIO */
+function fecharEdicao() {
+
+    document.getElementById("editarPagamentoBox").style.display = "none";
+
+}
+
 /* LISTAR */
 async function loadPagamentos() {
     try {
@@ -257,18 +417,44 @@ async function loadPagamentos() {
                 ? "status-pago"
                 : "status-pendente";
 
+
+            const botaoEditar = status === "PENDENTE"
+                ? `
+                    <button onclick="editarPagamento(${p.id})">
+                        Editar
+                    </button>
+                  `
+                : "";
+
+
             table.innerHTML += `
                 <tr>
                     <td>${p.id}</td>
+
                     <td>${p.ordem_servico_id}</td>
-                    <td>R$ ${Number(p.valor).toFixed(2)}</td>
-                    <td class="${statusClass}">${status}</td>
-                    <td>${p.forma_pagamento || "-"}</td>
+
+                    <td>
+                        R$ ${Number(p.valor).toFixed(2)}
+                    </td>
+
+                    <td class="${statusClass}">
+                        ${status}
+                    </td>
+
+                    <td>
+                        ${p.forma_pagamento || "-"}
+                    </td>
+
                     <td class="actions">
+
+                        ${botaoEditar}
+
                         <button onclick="deletePagamento(${p.id})">
                             Excluir
                         </button>
+
                     </td>
+
                 </tr>
             `;
         });
@@ -342,6 +528,92 @@ async function deletePagamento(id) {
         console.error(error);
         alert("Erro de conexão com o servidor.");
     }
+}
+
+/* SALVAR EDIÇÃO */
+async function salvarEdicao(){
+
+    const id = document.getElementById("editar_id").value;
+
+    const campo = document.getElementById("campoEditar").value;
+
+
+    let dados = {};
+
+
+    if(campo === "valor"){
+
+        dados.valor = Number(
+            document.getElementById("novoValor").value
+        );
+
+    }
+
+
+    if(campo === "status"){
+
+        dados.status =
+            document.getElementById("novoStatus").value;
+
+    }
+
+
+    if(campo === "forma_pagamento"){
+
+        dados.forma_pagamento =
+            document.getElementById("novaForma").value;
+
+    }
+
+
+    if(Object.keys(dados).length === 0){
+
+        alert("Escolha um campo para alterar.");
+        return;
+
+    }
+
+
+    try {
+
+        const response = await fetch(`${API}${id}`, {
+
+            method: "PUT",
+
+            headers: headers,
+
+            body: JSON.stringify(dados)
+
+        });
+
+
+        if(response.ok){
+
+            alert("Pagamento atualizado com sucesso!");
+
+            fecharEdicao();
+
+            loadPagamentos();
+
+        }else{
+
+            const erro = await response.text();
+
+            console.error(erro);
+
+            alert("Erro ao atualizar pagamento.");
+
+        }
+
+
+    } catch(error){
+
+        console.error(error);
+
+        alert("Erro de conexão com o servidor.");
+
+    }
+
 }
 
 /* INIT */
