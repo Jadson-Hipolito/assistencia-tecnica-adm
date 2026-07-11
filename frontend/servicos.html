@@ -212,25 +212,15 @@ function go(page) {
 }
 
 /* =====================
-   USUÁRIO
-===================== */
-
-fetch("http://localhost:8000/api/auth/me", {
-    headers: {
-        Authorization: `Bearer ${token}`
-    }
-})
-.then(r => r.json())
-.then(u => {
-    document.getElementById("usuario").innerText = `Bem-vindo, ${u.nome}`;
-});
-
-/* =====================
    LISTAR
 ===================== */
 
 async function loadServicos() {
-    const res = await fetch(API);
+    const res = await fetch(API, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
     const data = await res.json();
 
     const table = document.getElementById("servicosTable");
@@ -256,23 +246,37 @@ async function loadServicos() {
 ===================== */
 
 async function addServico() {
+
     const nome = document.getElementById("nome").value;
     const descricao = document.getElementById("descricao").value;
-    const valor_padrao = document.getElementById("preco").value;
+    const valor_padrao = Number(document.getElementById("preco").value);
 
-    await fetch(API, {
+    const res = await fetch(API, {
         method: "POST",
-        headers: { 
+        headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
             nome,
             descricao,
-            valor_padrao: Number(valor_padrao),
+            valor_padrao,
             ativo: true
         })
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert(data.detail || "Erro ao cadastrar serviço.");
+        return;
+    }
+
+    alert("Serviço cadastrado com sucesso!");
+
+    document.getElementById("nome").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("preco").value = "";
 
     loadServicos();
 }
@@ -282,12 +286,22 @@ async function addServico() {
 ===================== */
 
 async function deleteServico(id) {
-    await fetch(`${API}/${id}`, {
+
+    const res = await fetch(`${API}${id}`, {
         method: "DELETE",
         headers: {
             "Authorization": `Bearer ${token}`
         }
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        alert(data.detail || "Erro ao excluir serviço.");
+        return;
+    }
+
+    alert("Serviço desativado com sucesso!");
 
     loadServicos();
 }

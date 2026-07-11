@@ -4,6 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from backend.app.models.conta_receber import ContaReceber
+from backend.app.services.auditoria_service import AuditoriaService
 
 
 class PagamentoService:
@@ -35,7 +36,11 @@ class PagamentoService:
         db.add(conta)
         db.commit()
         db.refresh(conta)
-
+        AuditoriaService(self.db).registrar(
+            funcionario_id=None,
+            acao="CREATE",
+            entidade="ContaReceber"
+        )
         return {
             "message": "Pagamento registrado",
             "id": conta.id

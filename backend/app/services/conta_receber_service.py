@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from backend.app.models.conta_receber import ContaReceber
 from backend.app.services.base_service import BaseService
-
+from backend.app.services.auditoria_service import AuditoriaService
 
 class ContaReceberService(BaseService):
 
@@ -36,7 +36,13 @@ class ContaReceberService(BaseService):
 
         conta = ContaReceber(**payload)
 
-        return self._commit_and_refresh(conta)
+        conta = self._commit_and_refresh(conta)
+        AuditoriaService(self.db).registrar(
+            funcionario_id=None,
+            acao="CREATE",
+            entidade="ContaReceber"
+        )
+        return conta
 
     def listar(self) -> list[ContaReceber]:
         return self.db.query(ContaReceber).all()
@@ -53,6 +59,11 @@ class ContaReceberService(BaseService):
             setattr(conta, field, value)
         self.db.commit()
         self.db.refresh(conta)
+        AuditoriaService(self.db).registrar(
+            funcionario_id=None,
+            acao="UPDATE",
+            entidade="ContaReceber"
+        )
         return conta
 
     def marcar_como_pago(self, conta_id: int) -> ContaReceber:
@@ -65,10 +76,20 @@ class ContaReceberService(BaseService):
         conta.data_pagamento = datetime.now()
         self.db.commit()
         self.db.refresh(conta)
+        AuditoriaService(self.db).registrar(
+            funcionario_id=None,
+            acao="UPDATE",
+            entidade="ContaReceber"
+        )
         return conta
 
     def deletar(self, conta_id: int) -> ContaReceber:
         conta = self.buscar_por_id(conta_id)
         self.db.delete(conta)
         self.db.commit()
+        AuditoriaService(self.db).registrar(
+            funcionario_id=None,
+            acao="DELETE",
+            entidade="ContaReceber"
+        )
         return conta

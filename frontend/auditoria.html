@@ -9,84 +9,123 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            background: #f4f4f4;
+            background: #f3f4f6;
         }
 
         header {
-            background: #1f2937;
+            background: #111827;
             color: white;
-            padding: 15px;
+            padding: 16px;
             text-align: center;
+            font-weight: bold;
         }
 
-        /* NAVBAR */
+        /* NAV */
         nav {
-            background: #111827;
-            padding: 10px;
+            background: #1f2937;
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            justify-content: center;
         }
 
         nav button {
-            background: #2563eb;
-            border: none;
+            background: #374151;
             color: white;
+            border: none;
             padding: 10px 12px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 13px;
         }
 
         nav button:hover {
-            background: #1d4ed8;
-        }
-
-        .logout {
-            background: #ef4444 !important;
+            background: #4b5563;
         }
 
         .container {
-            padding: 20px;
+            padding: 25px;
         }
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
+        /* FORM */
+        .form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+        }
+
+        .form h3 {
+            margin-top: 0;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 220px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
         }
 
         button {
-            padding: 10px 15px;
+            padding: 10px 14px;
             border: none;
+            border-radius: 6px;
             cursor: pointer;
             background: #2563eb;
             color: white;
-            border-radius: 5px;
         }
 
         button:hover {
             background: #1d4ed8;
         }
 
+        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
         }
 
         th, td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px;
             text-align: left;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         th {
-            background: #f1f5f9;
+            background: #f9fafb;
         }
 
-        .tipo-create { color: green; font-weight: bold; }
-        .tipo-update { color: orange; font-weight: bold; }
-        .tipo-delete { color: red; font-weight: bold; }
+        .actions button {
+            background: #ef4444;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .actions button:hover {
+            background: #dc2626;
+        }
+
+        .title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .refresh {
+            background: #10b981;
+        }
+
+        .refresh:hover {
+            background: #059669;
+        }
     </style>
 </head>
 

@@ -314,7 +314,26 @@ async function addEquipamento() {
 
 /* DELETE */
 async function deleteEquipamento(id) {
-    await fetch(`${API}/${id}`, { method: "DELETE" });
+
+    if (!confirm("Deseja realmente excluir este equipamento?")) {
+        return;
+    }
+
+    const res = await fetch(`${API}${id}`, {
+        method: "DELETE",
+        headers: headers
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        console.error(data);
+        alert(data.detail || "Erro ao excluir equipamento");
+        return;
+    }
+
+    alert("Equipamento excluído com sucesso!");
+
     loadEquipamentos();
 }
 

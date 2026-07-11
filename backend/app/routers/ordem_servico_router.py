@@ -24,12 +24,21 @@ router = APIRouter(prefix="/ordens", tags=["Ordens de Serviço"])
 def create(
     data: OrdemServicoCreate,
     db: Session = Depends(get_db),
-    _: dict = Depends(require_roles("admin", "tecnico")),
+    payload: dict = Depends(require_roles("admin", "tecnico")),
 ):
     try:
-        return OrdemServicoService(db).abrir_os(data)
+        executor_id = int(payload["sub"])
+
+        return OrdemServicoService(db).abrir_os(
+            data,
+            executor_id
+        )
+
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc)
+        ) from exc
 
 
 @router.get("/", response_model=List[OrdemServicoResponse])
@@ -52,17 +61,26 @@ def get(
     return ordem
 
 
-@router.put("/{id}", response_model=OrdemServicoResponse)
 def update(
     id: int,
     data: OrdemServicoUpdate,
     db: Session = Depends(get_db),
-    _: dict = Depends(require_roles("admin", "tecnico")),
+    payload: dict = Depends(require_roles("admin", "tecnico")),
 ):
     try:
-        return OrdemServicoService(db).atualizar_os(id, data)
+        executor_id = int(payload["sub"])
+
+        return OrdemServicoService(db).atualizar_os(
+            id,
+            data,
+            executor_id
+        )
+
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc)
+        ) from exc
 
 
 @router.patch("/{id}/encerrar", response_model=OrdemServicoResponse)
@@ -77,15 +95,21 @@ def encerrar(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
-@router.delete("/{id}")
-def delete(
+def encerrar(
     id: int,
     db: Session = Depends(get_db),
-    _: dict = Depends(require_roles("admin", "tecnico")),
+    payload: dict = Depends(require_roles("admin", "tecnico")),
 ):
-    ordem = db.get(OrdemServico, id)
-    if not ordem:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="OS não encontrada")
-    db.delete(ordem)
-    db.commit()
-    return {"message": "Ordem de serviço cancelada com sucesso"}
+    try:
+        executor_id = int(payload["sub"])
+
+        return OrdemServicoService(db).finalizar_os(
+            id,
+            executor_id
+        )
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(exc)
+        ) from exc
