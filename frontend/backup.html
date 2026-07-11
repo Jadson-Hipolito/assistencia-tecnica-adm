@@ -166,6 +166,11 @@
 
 <script>
 const API = "http://localhost:8000/api/backup/";
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    window.location.href = "index.html";
+}
 
 /* NAV */
 function go(page) {
@@ -174,45 +179,65 @@ function go(page) {
 
 /* LOGOUT */
 function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "login.html";
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("token_type");
+    localStorage.removeItem("usuario");
+    window.location.replace("index.html");
 }
 
 /* CREATE */
 async function createBackup() {
-    const res = await fetch(`${API}/create`, { method: "POST" });
+
+    const res = await fetch(`${API}manual`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
     const data = await res.json();
-    document.getElementById("status").innerText = data.message || "Backup criado!";
+
+    if (!res.ok) {
+        alert(data.detail);
+        return;
+    }
+
+    document.getElementById("status").innerText =
+        "Backup criado com sucesso!";
+
+    loadBackups();
 }
 
 /* LIST */
 async function loadBackups() {
-    const res = await fetch(`${API}/list`);
+
+    const res = await fetch(API, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
     const data = await res.json();
 
     const list = document.getElementById("backupList");
+
     list.innerHTML = "";
 
     data.forEach(b => {
+
         list.innerHTML += `
             <div class="item">
-                📦 ${b.nome} — ${b.data}
+                <strong>${b.file_name}</strong><br>
+                ${b.created_at}
             </div>
         `;
+
     });
+
 }
 
-/* CLEAR */
-async function clearBackups() {
-    const res = await fetch(`${API}/clear`, { method: "DELETE" });
-    const data = await res.json();
 
-    document.getElementById("status").innerText =
-        data.message || "Backups removidos!";
 
-    document.getElementById("backupList").innerHTML = "";
-}
 </script>
 
 </body>
