@@ -231,16 +231,20 @@ Abaixo apresentamos o modelo conceitual usando o **Mermaid**.
 
 ```mermaid
 erDiagram
-    %% Entidades Base
-    class Funcionario {
+
+%% =========================
+%% Entidades Base
+%% =========================
+
+Funcionario {
     int id PK
     string nome
     string email
     string senha
-    string perfil   
+    string perfil
 }
 
-class Cliente {
+Cliente {
     int id PK
     string tipo_pessoa
     string nome
@@ -249,9 +253,12 @@ class Cliente {
     string email
     string endereco
 }
-    
-    %% Entidades de Negócio
-    class Aparelho {
+
+%% =========================
+%% Entidades de Negócio
+%% =========================
+
+Aparelho {
     int id PK
     string tipo
     string marca
@@ -261,7 +268,7 @@ class Cliente {
     int cliente_id FK
 }
 
-class Ordem_Servico {
+OrdemServico {
     int id PK
     string status
     string descricao
@@ -271,21 +278,21 @@ class Ordem_Servico {
     int aparelho_id FK
 }
 
-class Servico {
+Servico {
     int id PK
     string nome
     string descricao
     decimal valor_padrao
 }
 
-class OrdemServicoServico {
+OrdemServicoServico {
     int ordem_servico_id FK
     int servico_id FK
     int quantidade
     decimal valor_aplicado
 }
 
-class Equipamento {
+Equipamento {
     int id PK
     string nome
     string tipo
@@ -293,54 +300,71 @@ class Equipamento {
     string status
 }
 
-class VisitaTecnica {
+VisitaTecnica {
     int id PK
     date data
     string observacao
     int ordem_servico_id FK
     int funcionario_id FK
 }
-    
-    %% Entidades Financeiras
-    class ContaReceber {
-        int id PK
-        decimal valor_total
-        decimal valor_multa
-        decimal valor_desconto
-        string status
-        date vencimento
-        int ordem_servico_id FK
-}
-    
-    %% Entidades de Suporte
-    class Garantia {
-        int id PK
-        int ordem_servico_id FK
-        date data_inicio
-        date data_fim
-        int prazo_dias
-        string status  
+
+%% =========================
+%% Entidades Financeiras
+%% =========================
+
+ContaReceber {
+    int id PK
+    decimal valor_total
+    decimal valor_multa
+    decimal valor_desconto
+    string status
+    date vencimento
+    int ordem_servico_id FK
 }
 
-class AuditoriaLog {
+%% =========================
+%% Entidades de Suporte
+%% =========================
+
+Garantia {
+    int id PK
+    int ordem_servico_id FK
+    date data_inicio
+    date data_fim
+    int prazo_dias
+    string status
+}
+
+AuditoriaLog {
     int id PK
     string acao
     string entidade
-    date data_hora
+    datetime data_hora
     int funcionario_id FK
-} 
-        
-    %% Relacionamentos de Associação
-    CLIENTE ||--o{ APARELHO : "possui"
-    CLIENTE ||--o{ ORDEM_SERVICO : "solicita"         
-    APARELHO ||--o{ ORDEM_SERVICO : "registrado_em" 
-    SERVICO ||--o{ ORDEMSERVICOSERVICO : "executado_em" 
-    ORDEM_SERVICO ||--o{ ORDEMSERVICOSERVICO : "contem"
-    ORDEM_SERVICO ||--|| CONTA_RECEBER : "gera"
-    ORDEM_SERVICO ||--|| GARANTIA : "contem"
-    FUNCIONARIO ||--o{ VISITA_TECNICA : "realiza"
-    ORDEM_SERVICO ||--o{ VISITA_TECNICA : "gera"    
-    FUNCIONARIO ||--o{ AUDITORIA_LOG : "gera"
+}
+
+%% =========================
+%% Relacionamentos
+%% =========================
+
+Cliente ||--o{ Aparelho : possui
+Cliente ||--o{ OrdemServico : solicita
+
+Aparelho ||--o{ OrdemServico : registrado_em
+
+OrdemServico ||--o{ OrdemServicoServico : contem
+Servico ||--o{ OrdemServicoServico : executado_em
+
+OrdemServico ||--|| ContaReceber : gera
+OrdemServico ||--|| Garantia : possui
+
+Funcionario ||--o{ VisitaTecnica : realiza
+OrdemServico ||--o{ VisitaTecnica : gera
+
+Funcionario ||--o{ AuditoriaLog : gera
+
+VisitaTecnica ||--o{ Equipamento : utiliza
+OrdemServicoServico ||--o{ Equipamento : consome
 ```
 
 
