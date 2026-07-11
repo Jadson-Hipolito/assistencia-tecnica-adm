@@ -1,96 +1,196 @@
 # 🛠️ Sistema de Assistência Técnica
 
-## 📌 Objetivo
+<p align="center">
 
-O Sistema de Assistência Técnica facilita o gerenciamento de clientes, equipamentos, ordens de serviço, contas a receber e notificações, com foco em organização e eficiência no atendimento técnico.
+![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge\&logo=fastapi\&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge\&logo=react\&logoColor=black)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge\&logo=sqlite\&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge\&logo=vite\&logoColor=white)
+![License](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange?style=for-the-badge)
 
----
-
-## 🚀 Funcionalidades
-
-* Cadastro e gerenciamento de clientes
-* Cadastro de equipamentos usados e serviços executados
-* Criação, atualização e controle de ordens de serviço
-* Gestão de funcionários e técnicos
-* Controle financeiro de contas a receber
-* Relatórios de clientes, funcionários e ordens
+</p>
 
 ---
 
-## 💻 Tecnologias Utilizadas
+## 📖 Sobre o Projeto
 
-* **Python 3.12+**
-* **FastAPI**
-* **SQLite**
-* **SQLAlchemy**
-* **React**
-* **Vite**
-* **Vitest**
-* **Git & GitHub**
+O **Sistema de Assistência Técnica** é uma aplicação web desenvolvida para auxiliar empresas de assistência técnica no gerenciamento de clientes, equipamentos, ordens de serviço, funcionários e controle financeiro.
+
+O projeto utiliza uma arquitetura baseada em **FastAPI** no backend e **React + Vite** no frontend, seguindo boas práticas de organização, testes automatizados e separação de responsabilidades.
 
 ---
 
-## 🔐 Credenciais Padrão
+## ✨ Funcionalidades
 
-Para acessar o sistema com a conta de administrador:
+### 👥 Clientes
 
-| Campo | Valor |
-|-------|-------|
+* Cadastro de clientes
+* Edição de informações
+* Exclusão de registros
+* Pesquisa de clientes
+
+### 📱 Equipamentos
+
+* Cadastro de equipamentos
+* Associação ao cliente
+* Histórico de serviços
+
+### 🛠️ Ordens de Serviço
+
+* Criação de OS
+* Atualização de status
+* Controle de serviços executados
+* Consulta de ordens
+
+### 👨‍💼 Funcionários
+
+* Cadastro de técnicos
+* Controle de permissões
+
+### 💰 Financeiro
+
+* Contas a receber
+* Controle de pagamentos
+* Situação financeira
+
+### 📊 Relatórios
+
+* Clientes
+* Funcionários
+* Ordens de serviço
+
+---
+
+# 🏗 Arquitetura
+
+```text
+React + Vite
+       │
+       ▼
+    FastAPI
+       │
+ SQLAlchemy ORM
+       │
+     SQLite
+```
+
+---
+
+# 🖥️ Tecnologias Utilizadas
+
+| Tecnologia   | Finalidade      |
+| ------------ | --------------- |
+| Python 3.12+ | Backend         |
+| FastAPI      | API REST        |
+| SQLAlchemy   | ORM             |
+| SQLite       | Banco de dados  |
+| React        | Interface       |
+| Vite         | Build Frontend  |
+| Vitest       | Testes Frontend |
+| Pytest       | Testes Backend  |
+| Git          | Versionamento   |
+
+---
+
+# 🔐 Credenciais Padrão
+
+| Campo     | Valor                   |
+| --------- | ----------------------- |
 | **Email** | `admin@assistencia.com` |
-| **Senha** | `admin123` |
+| **Senha** | `admin123`              |
 
 ---
 
-## 📂 Estrutura do Projeto
+# 📁 Estrutura do Projeto
 
-* `backend/` → API FastAPI e lógica do servidor
-  * `backend/app/` → aplicação FastAPI, modelos, routers e configuração de banco
-  * `backend/tests/unit/` → testes unitários backend
-  * `backend/tests/integration/` → testes de integração backend
-* `frontend/` → aplicativo React e testes Vitest
-* `docs/` → documentação do projeto
-* `data/` → arquivos persistentes e banco SQLite
+```text
+assistencia-tecnica-adm/
+│
+├── backend/
+│   ├── app/
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── repositories/
+│   │   ├── routers/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── main.py
+│   │
+│   └── tests/
+│       ├── unit/
+│       └── integration/
+│
+├── frontend/
+│
+├── docs/
+│
+├── data/
+│
+├── README.md
+└── requirements.txt
+```
 
 ---
 
-## 🔧 Como Executar o Projeto
+# ⚙️ Instalação
 
-### 1. Clonar o repositório
+## Clonar o repositório
 
 ```bash
-git clone https://github.com/Jadson-Hipolito/assistencia-tecnica-adm
+git clone https://github.com/Jadson-Hipolito/assistencia-tecnica-adm.git
+
 cd assistencia-tecnica-adm
 ```
 
-### 2. Criar e ativar o ambiente virtual Python
+---
+
+## Criar ambiente virtual
+
+### Linux / WSL
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
+
 source .venv/bin/activate
 ```
 
-### 3. Instalar dependências do backend
+### Windows
+
+```powershell
+python -m venv .venv
+
+.venv\Scripts\activate
+```
+
+---
+
+## Instalar dependências
 
 ```bash
 pip install -r backend/requirements.txt
 ```
 
-### 4. Executar o servidor backend
+---
 
-A partir da raiz do projeto:
+# ▶️ Executando o Backend
+
+Na raiz do projeto:
 
 ```bash
 uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-A partir da pasta `backend`:
+Ou
 
 ```bash
 cd backend
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+uvicorn app.main:app --reload
 ```
 
-Ou execute o script de inicialização:
+Também é possível utilizar
 
 ```bash
 ./start_server.sh
@@ -98,62 +198,101 @@ Ou execute o script de inicialização:
 
 ---
 
-## 🧪 Testes
-
-### Backend
-
-```bash
-.venv/bin/python -m pytest -q backend/tests/unit backend/tests/integration
-```
-
-### Frontend
+# 💻 Executando o Frontend
 
 ```bash
 cd frontend
+
 npm install
-npm run test
+
+npm run dev
 ```
 
-Testes frontend específicos:
+---
+
+# 🧪 Testes
+
+## Backend
+
+```bash
+pytest backend/tests/unit backend/tests/integration -q
+```
+
+## Frontend
+
+```bash
+cd frontend
+
+npm test
+```
+
+### Testes específicos
 
 ```bash
 npm run test:unit
+
 npm run test:integration
+
 npm run test:coverage
 ```
 
 ---
 
-## 🛠️ Frontend
+# 📚 Documentação
 
-O frontend está em `frontend/` e usa React com Vite. Os testes são executados com Vitest.
-
----
-
-## 📂 Notas sobre a organização
-
-* `backend/` agora é um pacote Python com `backend/__init__.py`
-* A aplicação backend expõe o app em `backend.app.main`
-* Os testes backend foram movidos para `backend/tests/unit` e `backend/tests/integration`
+| Documento          | Descrição                 |
+| ------------------ | ------------------------- |
+| Documento de Visão | `docs/doc-visao.md`       |
+| Modelo de Dados    | `docs/doc-modelos.md`     |
+| User Stories       | `docs/doc-userstories.md` |
+| Arquitetura        | `docs/arquitetura.md`     |
 
 ---
 
-## 📚 Documentação
+# 📌 API
 
-* 📄 [Documento de Visão](docs/doc-visao.md)
-* 📊 [Modelo de Dados](docs/doc-modelos.md)
-* 📋 [User Stories](docs/doc-userstories.md)
-* 🏗️ [Arquitetura do Software](docs/arquitetura.md)
+Após iniciar o backend:
+
+Swagger
+
+```text
+http://localhost:8000/docs
+```
+
+ReDoc
+
+```text
+http://localhost:8000/redoc
+```
 
 ---
 
-## 👥 Equipe
+# 🚀 Roadmap
 
-* Jadson Hipólito de Almeida
-* Mariana Araújo de Medeiros
+* [x] Cadastro de Clientes
+* [x] Cadastro de Equipamentos
+* [x] Ordens de Serviço
+* [x] Controle Financeiro
+* [x] Sistema de Funcionários
+* [x] API REST
+* [x] Testes Automatizados
+* [ ] Dashboard Gerencial
+* [ ] Notificações em Tempo Real
+* [ ] Backup Automático
+* [ ] Deploy em Produção
 
 ---
 
-## ✅ Status do Projeto
+# 👨‍💻 Equipe
 
-🚧 Em desenvolvimento
+**Jadson Hipólito de Almeida**
+
+**Mariana Araújo de Medeiros**
+
+---
+
+# 📈 Status do Projeto
+
+> 🚧 **Em desenvolvimento**
+
+Novas funcionalidades estão sendo implementadas continuamente visando tornar o sistema cada vez mais completo e robusto.
