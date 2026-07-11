@@ -7,4 +7,17 @@ router = APIRouter(prefix="/auditoria", tags=["Auditoria"])
 
 @router.get("/")
 def list_logs(db: Session = Depends(get_db)):
-    return AuditoriaService.list_all(db)
+    service = AuditoriaService(db)
+
+    logs = service.listar()
+
+    return [
+        {
+            "id": log.id,
+            "usuario": log.funcionario.nome if log.funcionario else "sistema",
+            "acao": log.acao,
+            "entidade": log.entidade,
+            "data": log.data_hora
+        }
+        for log in logs
+    ]

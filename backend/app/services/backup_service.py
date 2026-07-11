@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from backend.app.core.config import config
-from backend.app.models.auditoria_log import AuditoriaLog
+from backend.app.services.auditoria_service import AuditoriaService
 
 
 class BackupService:
@@ -58,15 +58,18 @@ class BackupService:
         }
 
     @classmethod
-    def _log_event(cls, db: Session, user_id: int | None, action: str, success: bool) -> None:
-        db.add(
-            AuditoriaLog(
-                funcionario_id=user_id,
-                acao=action,
-                entidade="backup",
-            )
+    def _log_event(
+        cls,
+        db: Session,
+        user_id: int | None,
+        action: str
+    ) -> None:
+
+        AuditoriaService(db).registrar(
+            funcionario_id=user_id,
+            acao=action,
+            entidade="Backup"
         )
-        db.commit()
 
     @classmethod
     def list_backups(cls) -> list[dict[str, Any]]:

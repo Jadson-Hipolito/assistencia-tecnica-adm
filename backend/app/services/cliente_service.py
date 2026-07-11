@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from backend.app.models.cliente import Cliente
 from backend.app.repositories.cliente_repository import ClienteRepository
 from backend.app.services.base_service import BaseService
+from backend.app.services.auditoria_service import AuditoriaService
 
 
 class ClienteService(BaseService):
@@ -10,7 +11,7 @@ class ClienteService(BaseService):
         super().__init__(db)
         self.repository = ClienteRepository(db)
 
-    def create(self, data) -> Cliente:
+    def create(self, data, funcionario_id: int) -> Cliente:
         payload = self._to_dict(data)
 
         documento = payload.pop("documento", None)
@@ -28,7 +29,11 @@ class ClienteService(BaseService):
 
         cliente = self._commit_and_refresh(cliente)
 
-        # 🔥 IMPORTANTE: normalizar resposta para API
+        AuditoriaService(self.db).registrar(
+            funcionario_id=funcionario_id,
+            acao="CREATE",
+            entidade="Cliente"
+        )
         cliente.documento = cliente.cpf
         cliente.contato = cliente.telefone
 
@@ -52,7 +57,7 @@ class ClienteService(BaseService):
         cliente.contato = cliente.telefone
         return cliente
 
-    def update(self, cliente_id: int, data) -> Cliente:
+    def update(self, cliente_id: int, data, funcionario_id: int) -> Cliente:
         cliente = self.get_by_id(cliente_id)
 
         for field, value in self._to_dict(data).items():
@@ -65,16 +70,28 @@ class ClienteService(BaseService):
 
         cliente = self.repository.update(cliente)
 
+        AuditoriaService(self.db).registrar(
+            funcionario_id=funcionario_id,
+            acao="UPDATE",
+            entidade="Cliente"
+        )
+
         cliente.documento = cliente.cpf
         cliente.contato = cliente.telefone
 
         return cliente
 
-    def delete(self, cliente_id: int) -> Cliente:
+    def delete(self, cliente_id: int, funcionario_id: int) -> Cliente:
         cliente = self.get_by_id(cliente_id)
         cliente.ativo = False
 
         cliente = self.repository.update(cliente)
+
+        AuditoriaService(self.db).registrar(
+            funcionario_id=funcionario_id,
+            acao="DELETE",
+            entidade="Cliente"
+        )
 
         cliente.documento = cliente.cpf
         cliente.contato = cliente.telefone
@@ -82,13 +99,13 @@ class ClienteService(BaseService):
         return cliente
 
     @staticmethod
-    def criar_cliente(db: Session, data):
-        return ClienteService(db).create(data)
+    def criar_cliente(db: Session, data, funcionario_id: int):
+        return ClienteService(db).create(data, funcionario_id)
 
     @staticmethod
     def listar(db: Session):
         return ClienteService(db).list_all()
 
     @staticmethod
-    def desativar(db: Session, cliente_id: int):
-        return ClienteService(db).delete(cliente_id)
+    def desativar(db: Session, cliente_id: int, funcionario_id: int):
+        return ClienteService(db).delete(cliente_id, funcionario_id)
